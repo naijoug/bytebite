@@ -1,0 +1,121 @@
+[
+  {
+    "id": "array-map",
+    "title": "数组映射",
+    "description": "将数组中的每个元素通过函数转换为新值，生成新数组",
+    "category": "数据处理",
+    "difficulty": "beginner",
+    "paradigms": ["函数式"],
+    "tags": ["数组", "转换", "高阶函数"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "const numbers = [1, 2, 3, 4, 5];\nconst doubled = numbers.map(n => n * 2);\nconsole.log(doubled);",
+        "explanation": "使用内置的 map 方法对数组进行转换",
+        "output": "[2, 4, 6, 8, 10]",
+        "designRationale": "JavaScript 的 map 方法是函数式编程的核心，返回新数组而不修改原数组",
+        "pros": ["简洁", "不可变性", "链式调用"],
+        "references": [
+          {
+            "title": "Array.prototype.map()",
+            "url": "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/map"
+          }
+        ]
+      },
+      {
+        "languageId": "python",
+        "code": "numbers = [1, 2, 3, 4, 5]\ndoubled = list(map(lambda n: n * 2, numbers))\nprint(doubled)",
+        "explanation": "使用内置的 map 函数配合 lambda 表达式",
+        "output": "[2, 4, 6, 8, 10]",
+        "designRationale": "Python 的 map 返回迭代器，需要转换为列表。列表推导式是更 Pythonic 的方式",
+        "pros": ["函数式风格", "惰性求值"],
+        "cons": ["需要转换为列表", "列表推导式更常用"]
+      },
+      {
+        "languageId": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tnumbers := []int{1, 2, 3, 4, 5}\n\tdoubled := make([]int, len(numbers))\n\tfor i, n := range numbers {\n\t\tdoubled[i] = n * 2\n\t}\n\tfmt.Println(doubled)\n}",
+        "explanation": "Go 没有内置 map 函数，使用 for 循环手动实现",
+        "output": "[2 4 6 8 10]",
+        "designRationale": "Go 强调显式和简单，避免过度抽象",
+        "pros": ["性能高", "代码清晰"],
+        "cons": ["代码较长", "需要手动管理"]
+      }
+    ]
+  },
+  {
+    "id": "error-handling",
+    "title": "错误处理",
+    "description": "处理可能失败的操作，优雅地处理错误情况",
+    "category": "错误处理",
+    "difficulty": "intermediate",
+    "paradigms": ["过程式", "函数式"],
+    "tags": ["错误", "异常", "Result"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "async function fetchData(url) {\n  try {\n    const response = await fetch(url);\n    if (!response.ok) {\n      throw new Error(`HTTP error! status: ${response.status}`);\n    }\n    return await response.json();\n  } catch (error) {\n    console.error('获取数据失败:', error);\n    return null;\n  }\n}",
+        "explanation": "使用 try-catch 捕获异步操作中的错误",
+        "designRationale": "JavaScript 使用异常机制处理错误，配合 async/await 提供清晰的异步错误处理",
+        "pros": ["语法简洁", "异步友好"],
+        "cons": ["可能被忽略", "性能开销"]
+      },
+      {
+        "languageId": "go",
+        "code": "func fetchData(url string) ([]byte, error) {\n\tresp, err := http.Get(url)\n\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"请求失败: %w\", err)\n\t}\n\tdefer resp.Body.Close()\n\t\n\tif resp.StatusCode != http.StatusOK {\n\t\treturn nil, fmt.Errorf(\"HTTP错误: %d\", resp.StatusCode)\n\t}\n\t\n\treturn io.ReadAll(resp.Body)\n}",
+        "explanation": "Go 使用显式的错误返回值，调用者必须检查错误",
+        "designRationale": "Go 的错误处理哲学是将错误作为值返回，强制开发者显式处理",
+        "pros": ["错误不会被忽略", "清晰的控制流"],
+        "cons": ["代码冗长", "重复的 if err != nil"]
+      },
+      {
+        "languageId": "rust",
+        "code": "use std::fs::File;\nuse std::io::Read;\n\nfn read_file(path: &str) -> Result<String, std::io::Error> {\n    let mut file = File::open(path)?;\n    let mut contents = String::new();\n    file.read_to_string(&mut contents)?;\n    Ok(contents)\n}",
+        "explanation": "使用 Result 类型和 ? 操作符进行错误传播",
+        "designRationale": "Rust 的 Result 类型强制处理错误，? 操作符提供简洁的错误传播",
+        "pros": ["类型安全", "零成本抽象", "编译时检查"],
+        "references": [
+          {
+            "title": "Error Handling",
+            "url": "https://doc.rust-lang.org/book/ch09-00-error-handling.html"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "string-interpolation",
+    "title": "字符串插值",
+    "description": "在字符串中嵌入变量或表达式的值",
+    "category": "字符串操作",
+    "difficulty": "beginner",
+    "paradigms": ["过程式"],
+    "tags": ["字符串", "格式化", "模板"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "const name = 'Alice';\nconst age = 30;\nconst message = `Hello, ${name}! You are ${age} years old.`;\nconsole.log(message);",
+        "explanation": "使用模板字符串（反引号）和 ${} 语法",
+        "output": "Hello, Alice! You are 30 years old.",
+        "designRationale": "ES6 引入的模板字符串提供了清晰的字符串插值语法",
+        "pros": ["可读性强", "支持多行", "可嵌入表达式"]
+      },
+      {
+        "languageId": "python",
+        "code": "name = 'Alice'\nage = 30\nmessage = f'Hello, {name}! You are {age} years old.'\nprint(message)",
+        "explanation": "使用 f-string（格式化字符串字面值）",
+        "output": "Hello, Alice! You are 30 years old.",
+        "designRationale": "Python 3.6+ 的 f-string 是最简洁和高效的字符串格式化方式",
+        "pros": ["简洁", "性能好", "支持表达式"]
+      },
+      {
+        "languageId": "rust",
+        "code": "let name = \"Alice\";\nlet age = 30;\nlet message = format!(\"Hello, {}! You are {} years old.\", name, age);\nprintln!(\"{}\", message);",
+        "explanation": "使用 format! 宏进行字符串格式化",
+        "output": "Hello, Alice! You are 30 years old.",
+        "designRationale": "Rust 使用宏而非特殊语法，保持语言核心简洁",
+        "pros": ["类型安全", "编译时检查"],
+        "cons": ["语法相对冗长"]
+      }
+    ]
+  }
+]

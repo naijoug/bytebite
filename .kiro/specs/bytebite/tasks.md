@@ -1,6 +1,6 @@
 # 实施计划
 
-- [ ] 1. 初始化项目结构和配置
+- [x] 1. 初始化项目结构和配置
   - 使用 Vite 创建 React + TypeScript 项目
   - 配置 Tailwind CSS
   - 设置 ESLint 和 Prettier
@@ -8,28 +8,28 @@
   - 创建基础目录结构 (components, pages, types, data, utils)
   - _需求: 1.1, 2.1, 3.1_
 
-- [ ] 2. 定义核心数据类型和模型
+- [x] 2. 定义核心数据类型和模型
   - 创建 TypeScript 接口定义文件 (types/index.ts)
   - 定义 Idiom, Implementation, Language, FilterOptions, UserPreferences 接口
   - 创建示例数据文件 (idioms.json, languages.json)
   - _需求: 1.1, 2.1, 3.1_
 
-- [ ] 3. 实现数据管理和状态管理
+- [x] 3. 实现数据管理和状态管理
   - 创建数据加载工具函数 (utils/dataLoader.ts)
   - 实现 Local Storage 工具函数 (utils/storage.ts)
   - 创建全局状态 Context (contexts/AppContext.tsx)
   - 实现用户偏好管理 hooks (hooks/usePreferences.ts)
   - _需求: 2.8, 5.4_
 
-- [ ] 4. 实现搜索和筛选功能
+- [x] 4. 实现搜索和筛选功能
   - 创建搜索和筛选工具函数 (utils/filters.ts)
   - 实现关键词搜索逻辑
   - 实现按范式、难度、分类的筛选逻辑
   - 创建防抖搜索 hook (hooks/useDebounce.ts)
   - _需求: 1.4, 4.1, 4.2, 4.3, 4.4_
-  - [ ] 4.1 编写搜索和筛选函数的单元测试
+  - [x] 4.1 编写搜索和筛选函数的单元测试
 
-- [ ] 5. 创建基础 UI 组件
+- [x] 5. 创建基础 UI 组件
   - 实现 Layout 组件（导航栏、页脚）
   - 创建 SearchBar 组件
   - 创建 FilterPanel 组件
@@ -37,7 +37,7 @@
   - 实现响应式导航菜单
   - _需求: 1.1, 1.4, 4.1, 7.1_
 
-- [ ] 6. 实现习语列表页面
+- [x] 6. 实现习语列表页面
   - 创建 IdiomList 组件
   - 创建 IdiomCard 组件展示单个习语
   - 集成搜索和筛选功能
@@ -45,7 +45,7 @@
   - 实现列表的响应式布局
   - _需求: 1.1, 1.2, 1.3, 1.5, 4.5, 7.2_
 
-- [ ] 7. 实现语言选择器组件
+- [-] 7. 实现语言选择器组件
   - 创建 LanguageSelector 组件
   - 实现多选下拉菜单或复选框列表
   - 显示已选语言的标签

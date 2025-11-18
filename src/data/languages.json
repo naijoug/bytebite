@@ -1,0 +1,98 @@
+[
+  {
+    "id": "javascript",
+    "name": "JavaScript",
+    "version": "ES2023",
+    "paradigms": ["面向对象", "函数式", "事件驱动"],
+    "typeSystem": "dynamic",
+    "description": "一种轻量级、解释型的编程语言，主要用于Web开发",
+    "features": [
+      "原型继承",
+      "闭包",
+      "异步编程",
+      "动态类型",
+      "一等函数"
+    ],
+    "officialDocs": "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript"
+  },
+  {
+    "id": "typescript",
+    "name": "TypeScript",
+    "version": "5.3",
+    "paradigms": ["面向对象", "函数式"],
+    "typeSystem": "static",
+    "description": "JavaScript的超集，添加了静态类型系统",
+    "features": [
+      "静态类型检查",
+      "接口和类型别名",
+      "泛型",
+      "装饰器",
+      "高级类型推断"
+    ],
+    "officialDocs": "https://www.typescriptlang.org/docs/"
+  },
+  {
+    "id": "python",
+    "name": "Python",
+    "version": "3.12",
+    "paradigms": ["面向对象", "函数式", "过程式"],
+    "typeSystem": "dynamic",
+    "description": "一种高级、通用的编程语言，强调代码可读性",
+    "features": [
+      "简洁的语法",
+      "丰富的标准库",
+      "动态类型",
+      "列表推导式",
+      "装饰器"
+    ],
+    "officialDocs": "https://docs.python.org/zh-cn/3/"
+  },
+  {
+    "id": "go",
+    "name": "Go",
+    "version": "1.21",
+    "paradigms": ["并发", "过程式"],
+    "typeSystem": "static",
+    "description": "Google开发的静态类型编译语言，专注于简洁和并发",
+    "features": [
+      "Goroutines并发",
+      "Channel通信",
+      "接口隐式实现",
+      "垃圾回收",
+      "快速编译"
+    ],
+    "officialDocs": "https://go.dev/doc/"
+  },
+  {
+    "id": "rust",
+    "name": "Rust",
+    "version": "1.75",
+    "paradigms": ["函数式", "并发", "过程式"],
+    "typeSystem": "static",
+    "description": "专注于安全、并发和性能的系统编程语言",
+    "features": [
+      "所有权系统",
+      "零成本抽象",
+      "内存安全",
+      "无数据竞争",
+      "模式匹配"
+    ],
+    "officialDocs": "https://doc.rust-lang.org/"
+  },
+  {
+    "id": "java",
+    "name": "Java",
+    "version": "21",
+    "paradigms": ["面向对象"],
+    "typeSystem": "static",
+    "description": "广泛使用的面向对象编程语言，强调跨平台性",
+    "features": [
+      "JVM虚拟机",
+      "强类型系统",
+      "垃圾回收",
+      "丰富的生态系统",
+      "企业级支持"
+    ],
+    "officialDocs": "https://docs.oracle.com/en/java/"
+  }
+]

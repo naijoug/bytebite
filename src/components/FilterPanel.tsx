@@ -1,0 +1,194 @@
+import { useState } from 'react';
+import type { FilterOptions } from '../types';
+import { Button } from './common';
+
+export interface FilterPanelProps {
+  filters: FilterOptions;
+  onFilterChange: (filters: FilterOptions) => void;
+  availableCategories?: string[];
+  availableParadigms?: string[];
+  availableLanguages?: string[];
+}
+
+export const FilterPanel = ({
+  filters,
+  onFilterChange,
+  availableCategories = [],
+  availableParadigms = [],
+  availableLanguages = [],
+}: FilterPanelProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const difficulties: Array<'beginner' | 'intermediate' | 'advanced'> = [
+    'beginner',
+    'intermediate',
+    'advanced',
+  ];
+
+  const difficultyLabels = {
+    beginner: '初级',
+    intermediate: '中级',
+    advanced: '高级',
+  };
+
+  const toggleFilter = <K extends keyof FilterOptions>(
+    key: K,
+    value: string
+  ) => {
+    const currentValues = (filters[key] as string[]) || [];
+    const newValues = currentValues.includes(value)
+      ? currentValues.filter((v) => v !== value)
+      : [...currentValues, value];
+
+    onFilterChange({
+      ...filters,
+      [key]: newValues.length > 0 ? newValues : undefined,
+    });
+  };
+
+  const clearFilters = () => {
+    onFilterChange({});
+  };
+
+  const hasActiveFilters =
+    (filters.categories?.length ?? 0) > 0 ||
+    (filters.paradigms?.length ?? 0) > 0 ||
+    (filters.difficulty?.length ?? 0) > 0 ||
+    (filters.languages?.length ?? 0) > 0;
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-900">筛选</h3>
+        <div className="flex items-center gap-2">
+          {hasActiveFilters && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              aria-label="清除所有筛选"
+            >
+              清除
+            </Button>
+          )}
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="lg:hidden p-1 hover:bg-gray-100 rounded"
+            aria-label={isExpanded ? '收起筛选' : '展开筛选'}
+            aria-expanded={isExpanded}
+          >
+            <svg
+              className={`h-5 w-5 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div
+        className={`space-y-6 ${isExpanded ? 'block' : 'hidden'} lg:block`}
+      >
+        {/* Difficulty Filter */}
+        <div>
+          <h4 className="text-sm font-medium text-gray-700 mb-2">难度</h4>
+          <div className="space-y-2">
+            {difficulties.map((difficulty) => (
+              <label
+                key={difficulty}
+                className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded"
+              >
+                <input
+                  type="checkbox"
+                  checked={filters.difficulty?.includes(difficulty) ?? false}
+                  onChange={() => toggleFilter('difficulty', difficulty)}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <span className="ml-2 text-sm text-gray-700">
+                  {difficultyLabels[difficulty]}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Categories Filter */}
+        {availableCategories.length > 0 && (
+          <div>
+            <h4 className="text-sm font-medium text-gray-700 mb-2">分类</h4>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {availableCategories.map((category) => (
+                <label
+                  key={category}
+                  className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded"
+                >
+                  <input
+                    type="checkbox"
+                    checked={filters.categories?.includes(category) ?? false}
+                    onChange={() => toggleFilter('categories', category)}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">{category}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Paradigms Filter */}
+        {availableParadigms.length > 0 && (
+          <div>
+            <h4 className="text-sm font-medium text-gray-700 mb-2">范式</h4>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {availableParadigms.map((paradigm) => (
+                <label
+                  key={paradigm}
+                  className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded"
+                >
+                  <input
+                    type="checkbox"
+                    checked={filters.paradigms?.includes(paradigm) ?? false}
+                    onChange={() => toggleFilter('paradigms', paradigm)}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">{paradigm}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Languages Filter */}
+        {availableLanguages.length > 0 && (
+          <div>
+            <h4 className="text-sm font-medium text-gray-700 mb-2">语言</h4>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {availableLanguages.map((language) => (
+                <label
+                  key={language}
+                  className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded"
+                >
+                  <input
+                    type="checkbox"
+                    checked={filters.languages?.includes(language) ?? false}
+                    onChange={() => toggleFilter('languages', language)}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">{language}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
