@@ -6,15 +6,24 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:preview": "VITE_ENV=preview npm run build",
+    "build:production": "VITE_ENV=production npm run build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
     "preview": "vite preview",
     "test": "vitest",
-    "test:run": "vitest --run"
+    "test:run": "vitest --run",
+    "test:coverage": "vitest --run --coverage",
+    "test:e2e": "bash scripts/e2e-test.sh",
+    "test:all": "bash scripts/test-all.sh",
+    "validate": "npm run lint && npm run format:check && npm run test:run && npm run build",
+    "verify-build": "bash scripts/verify-build.sh",
+    "pre-deploy": "bash scripts/pre-deploy-check.sh"
   },
   "dependencies": {
+    "prismjs": "^1.30.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.6"
@@ -23,6 +32,7 @@
     "@eslint/js": "^9.39.1",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^24.10.0",
+    "@types/prismjs": "^1.26.5",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@typescript-eslint/eslint-plugin": "^8.47.0",

@@ -1,9 +1,33 @@
+/**
+ * 用户偏好管理 Hook
+ *
+ * 提供了一组便捷的方法来管理用户偏好设置，包括：
+ * - 收藏管理（添加、移除、检查）
+ * - 语言选择
+ * - 主题设置
+ * - 批量更新和重置
+ *
+ * 所有更改会自动持久化到 Local Storage
+ *
+ * @example
+ * ```tsx
+ * const { addFavorite, isFavorite, selectedLanguages } = usePreferences();
+ *
+ * // 添加收藏
+ * addFavorite('array-map');
+ *
+ * // 检查是否已收藏
+ * if (isFavorite('array-map')) {
+ *   console.log('已收藏');
+ * }
+ *
+ * // 更新语言选择
+ * setSelectedLanguages(['javascript', 'python']);
+ * ```
+ */
+
 import { useAppContext } from '../contexts/AppContext';
 import type { UserPreferences } from '../types';
-
-/**
- * Hook for managing user preferences
- */
 export function usePreferences() {
   const {
     preferences,

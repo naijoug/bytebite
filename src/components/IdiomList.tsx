@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, memo } from 'react';
 import type { Idiom, FilterOptions } from '../types';
 import { IdiomCard } from './IdiomCard';
 import { SearchBar } from './SearchBar';
@@ -10,7 +10,7 @@ export interface IdiomListProps {
   idioms: Idiom[];
 }
 
-export function IdiomList({ idioms }: IdiomListProps) {
+export const IdiomList = memo(function IdiomList({ idioms }: IdiomListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<FilterOptions>({});
   const [showFilters, setShowFilters] = useState(false);
@@ -23,21 +23,21 @@ export function IdiomList({ idioms }: IdiomListProps) {
     return searchAndFilterIdioms(idioms, debouncedQuery, filters);
   }, [idioms, debouncedQuery, filters]);
 
-  // 处理搜索
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
+  // 处理搜索 (memoized)
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  }, []);
 
-  // 处理筛选
-  const handleFilterChange = (newFilters: FilterOptions) => {
+  // 处理筛选 (memoized)
+  const handleFilterChange = useCallback((newFilters: FilterOptions) => {
     setFilters(newFilters);
-  };
+  }, []);
 
-  // 清除所有筛选
-  const handleClearFilters = () => {
+  // 清除所有筛选 (memoized)
+  const handleClearFilters = useCallback(() => {
     setSearchQuery('');
     setFilters({});
-  };
+  }, []);
 
   // 检查是否有激活的筛选条件
   const hasActiveFilters = useMemo(() => {
@@ -59,13 +59,16 @@ export function IdiomList({ idioms }: IdiomListProps) {
             <SearchBar
               value={searchQuery}
               onChange={handleSearch}
+              onClear={() => setSearchQuery('')}
               placeholder="搜索编程习语..."
             />
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm font-medium text-gray-700"
-            aria-label={showFilters ? '隐藏筛选' : '显示筛选'}
+            className="px-4 py-3 min-h-[44px] bg-white border border-gray-300 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base font-medium text-gray-700"
+            aria-label={showFilters ? '隐藏筛选面板' : '显示筛选面板'}
+            aria-expanded={showFilters}
+            aria-controls="filter-panel"
           >
             <svg
               className="w-5 h-5"
@@ -87,18 +90,34 @@ export function IdiomList({ idioms }: IdiomListProps) {
 
         {/* 筛选面板 */}
         {showFilters && (
-          <FilterPanel
-            idioms={idioms}
-            filters={filters}
-            onChange={handleFilterChange}
-          />
+          <div id="filter-panel">
+            <FilterPanel
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              availableCategories={Array.from(
+                new Set(idioms.map((i) => i.category))
+              )}
+              availableParadigms={Array.from(
+                new Set(idioms.flatMap((i) => i.paradigms))
+              )}
+            />
+          </div>
         )}
       </div>
 
       {/* 结果统计和清除按钮 */}
-      <div className="flex items-center justify-between">
+      <div
+        className="flex items-center justify-between"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         <p className="text-sm text-gray-600">
-          找到 <span className="font-semibold text-gray-900">{filteredIdioms.length}</span> 个习语
+          找到{' '}
+          <span className="font-semibold text-gray-900">
+            {filteredIdioms.length}
+          </span>{' '}
+          个习语
           {idioms.length !== filteredIdioms.length && (
             <span className="text-gray-400"> / 共 {idioms.length} 个</span>
           )}
@@ -106,7 +125,8 @@ export function IdiomList({ idioms }: IdiomListProps) {
         {hasActiveFilters && (
           <button
             onClick={handleClearFilters}
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="text-sm sm:text-base text-blue-600 hover:text-blue-700 active:text-blue-800 font-medium min-h-[44px] px-2 py-2"
+            aria-label="清除所有搜索和筛选条件"
           >
             清除筛选
           </button>
@@ -115,13 +135,17 @@ export function IdiomList({ idioms }: IdiomListProps) {
 
       {/* 习语列表 */}
       {filteredIdioms.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+          role="list"
+          aria-label="编程习语列表"
+        >
           {filteredIdioms.map((idiom) => (
             <IdiomCard key={idiom.id} idiom={idiom} />
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
+        <div className="text-center py-12" role="status">
           <svg
             className="mx-auto h-12 w-12 text-gray-400"
             fill="none"
@@ -143,7 +167,8 @@ export function IdiomList({ idioms }: IdiomListProps) {
           {hasActiveFilters && (
             <button
               onClick={handleClearFilters}
-              className="mt-4 text-sm text-blue-600 hover:text-blue-700 font-medium"
+              className="mt-4 px-4 py-2 min-h-[44px] text-sm sm:text-base text-blue-600 hover:text-blue-700 active:text-blue-800 font-medium"
+              aria-label="清除所有搜索和筛选条件"
             >
               清除所有筛选
             </button>
@@ -152,4 +177,4 @@ export function IdiomList({ idioms }: IdiomListProps) {
       )}
     </div>
   );
-}
+});

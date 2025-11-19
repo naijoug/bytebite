@@ -2,7 +2,24 @@ import type { Idiom, FilterOptions } from '../types';
 
 /**
  * 根据关键词搜索习语
- * 搜索范围：标题、描述、标签
+ *
+ * 搜索范围包括：
+ * - 习语标题
+ * - 习语描述
+ * - 习语标签
+ * - 习语分类
+ *
+ * 搜索不区分大小写，会自动去除首尾空格
+ *
+ * @param idioms - 要搜索的习语数组
+ * @param query - 搜索关键词
+ * @returns 匹配的习语数组，如果查询为空则返回所有习语
+ *
+ * @example
+ * ```typescript
+ * const results = searchIdioms(allIdioms, '数组');
+ * // 返回标题、描述、标签或分类中包含"数组"的所有习语
+ * ```
  */
 export function searchIdioms(idioms: Idiom[], query: string): Idiom[] {
   if (!query || query.trim() === '') {
@@ -38,11 +55,30 @@ export function searchIdioms(idioms: Idiom[], query: string): Idiom[] {
 
 /**
  * 根据筛选条件过滤习语
+ *
+ * 支持的筛选条件：
+ * - categories: 按分类筛选（数组，支持多选）
+ * - paradigms: 按编程范式筛选（数组，支持多选，只要习语包含任一范式即匹配）
+ * - difficulty: 按难度筛选（数组，支持多选）
+ * - languages: 按语言筛选（数组，支持多选，只要习语有该语言的实现即匹配）
+ *
+ * 多个筛选条件之间是 AND 关系，同一条件内的多个值是 OR 关系
+ *
+ * @param idioms - 要筛选的习语数组
+ * @param filters - 筛选条件对象
+ * @returns 符合所有筛选条件的习语数组
+ *
+ * @example
+ * ```typescript
+ * const filtered = filterIdioms(allIdioms, {
+ *   categories: ['数据处理'],
+ *   difficulty: ['beginner', 'intermediate'],
+ *   languages: ['javascript', 'python']
+ * });
+ * // 返回分类为"数据处理"，难度为初级或中级，且有 JS 或 Python 实现的习语
+ * ```
  */
-export function filterIdioms(
-  idioms: Idiom[],
-  filters: FilterOptions
-): Idiom[] {
+export function filterIdioms(idioms: Idiom[], filters: FilterOptions): Idiom[] {
   let result = idioms;
 
   // 按分类筛选
@@ -80,6 +116,22 @@ export function filterIdioms(
 
 /**
  * 组合搜索和筛选
+ *
+ * 先执行关键词搜索，然后对搜索结果应用筛选条件
+ * 这样可以确保结果同时满足搜索和筛选的要求
+ *
+ * @param idioms - 要处理的习语数组
+ * @param query - 搜索关键词
+ * @param filters - 筛选条件对象
+ * @returns 同时满足搜索和筛选条件的习语数组
+ *
+ * @example
+ * ```typescript
+ * const results = searchAndFilterIdioms(allIdioms, '数组', {
+ *   difficulty: ['beginner']
+ * });
+ * // 返回包含"数组"关键词且难度为初级的习语
+ * ```
  */
 export function searchAndFilterIdioms(
   idioms: Idiom[],
@@ -93,6 +145,12 @@ export function searchAndFilterIdioms(
 
 /**
  * 获取所有可用的分类
+ *
+ * 从习语数组中提取所有唯一的分类，并按字母顺序排序
+ * 用于生成筛选面板中的分类选项
+ *
+ * @param idioms - 习语数组
+ * @returns 排序后的分类名称数组
  */
 export function getAvailableCategories(idioms: Idiom[]): string[] {
   const categories = new Set<string>();
@@ -102,6 +160,12 @@ export function getAvailableCategories(idioms: Idiom[]): string[] {
 
 /**
  * 获取所有可用的范式
+ *
+ * 从习语数组中提取所有唯一的编程范式，并按字母顺序排序
+ * 一个习语可能包含多个范式，此函数会收集所有范式
+ *
+ * @param idioms - 习语数组
+ * @returns 排序后的范式名称数组
  */
 export function getAvailableParadigms(idioms: Idiom[]): string[] {
   const paradigms = new Set<string>();
@@ -113,6 +177,13 @@ export function getAvailableParadigms(idioms: Idiom[]): string[] {
 
 /**
  * 获取所有难度级别
+ *
+ * 返回系统支持的所有难度级别常量
+ * - beginner: 初级
+ * - intermediate: 中级
+ * - advanced: 高级
+ *
+ * @returns 难度级别数组
  */
 export function getAvailableDifficulties(): Array<
   'beginner' | 'intermediate' | 'advanced'

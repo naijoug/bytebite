@@ -21,7 +21,10 @@ export const Header = () => {
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="主导航">
+      <nav
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        aria-label="主导航"
+      >
         <div className="flex justify-between h-16">
           <div className="flex">
             <Link
@@ -53,11 +56,13 @@ export const Header = () => {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              className="inline-flex items-center justify-center p-3 min-w-[44px] min-h-[44px] rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 active:bg-gray-200 transition-colors"
               aria-expanded={isMobileMenuOpen}
-              aria-label="打开主菜单"
+              aria-label={isMobileMenuOpen ? '关闭主菜单' : '打开主菜单'}
             >
-              <span className="sr-only">打开主菜单</span>
+              <span className="sr-only">
+                {isMobileMenuOpen ? '关闭主菜单' : '打开主菜单'}
+              </span>
               {isMobileMenuOpen ? (
                 <svg
                   className="block h-6 w-6"
@@ -102,10 +107,10 @@ export const Header = () => {
                   key={item.name}
                   to={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`block px-3 py-2 text-base font-medium rounded-md transition-colors ${
+                  className={`block px-4 py-3 min-h-[44px] text-base font-medium rounded-md transition-colors active:scale-95 ${
                     isActive(item.href)
                       ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
+                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50 active:bg-gray-100'
                   }`}
                   aria-current={isActive(item.href) ? 'page' : undefined}
                 >

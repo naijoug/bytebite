@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { HTMLAttributes } from 'react';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
@@ -5,15 +6,14 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   size?: 'sm' | 'md';
 }
 
-export const Badge = ({
+export const Badge = memo(function Badge({
   variant = 'default',
   size = 'md',
   className = '',
   children,
   ...props
-}: BadgeProps) => {
-  const baseStyles =
-    'inline-flex items-center font-medium rounded-full';
+}: BadgeProps) {
+  const baseStyles = 'inline-flex items-center font-medium rounded-full';
 
   const variantStyles = {
     default: 'bg-gray-100 text-gray-800',
@@ -36,4 +36,4 @@ export const Badge = ({
       {children}
     </span>
   );
-};
+});

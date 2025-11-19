@@ -1,9 +1,40 @@
+/**
+ * Local Storage 管理工具
+ *
+ * 提供用户偏好设置的持久化存储功能：
+ * - 收藏的习语列表
+ * - 选中的编程语言
+ * - 主题设置
+ *
+ * 特性：
+ * - 自动处理 JSON 序列化/反序列化
+ * - 优雅降级（如果 Local Storage 不可用）
+ * - 提供默认值
+ *
+ * 存储键：bytebite_preferences
+ *
+ * @example
+ * ```typescript
+ * // 加载偏好
+ * const prefs = loadPreferences();
+ *
+ * // 保存偏好
+ * savePreferences({
+ *   favoriteIdioms: ['array-map', 'string-split'],
+ *   selectedLanguages: ['javascript', 'python'],
+ *   theme: 'dark'
+ * });
+ * ```
+ */
+
 import type { UserPreferences } from '../types';
 
 const STORAGE_KEY = 'bytebite_preferences';
 
 /**
  * 默认用户偏好设置
+ *
+ * 当 Local Storage 中没有保存的偏好或加载失败时使用
  */
 const DEFAULT_PREFERENCES: UserPreferences = {
   favoriteIdioms: [],
@@ -13,6 +44,8 @@ const DEFAULT_PREFERENCES: UserPreferences = {
 
 /**
  * 从 Local Storage 读取用户偏好
+ *
+ * @returns UserPreferences 用户偏好对象，如果加载失败则返回默认值
  */
 export function loadPreferences(): UserPreferences {
   try {
@@ -30,6 +63,8 @@ export function loadPreferences(): UserPreferences {
 
 /**
  * 保存用户偏好到 Local Storage
+ *
+ * @param preferences 要保存的用户偏好对象
  */
 export function savePreferences(preferences: UserPreferences): void {
   try {

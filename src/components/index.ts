@@ -3,8 +3,12 @@ export { Layout, Header, Footer } from './layout';
 export type { LayoutProps } from './layout';
 
 // Common components
-export { Button, Card, Badge } from './common';
+export { Button, Card, Badge, Spinner, LoadingScreen } from './common';
 export type { ButtonProps, CardProps, BadgeProps } from './common';
+
+// Error handling
+export { ErrorBoundary } from './ErrorBoundary';
+export { ErrorMessage } from './ErrorMessage';
 
 // Feature components
 export { SearchBar } from './SearchBar';
@@ -18,3 +22,12 @@ export type { IdiomListProps } from './IdiomList';
 
 export { IdiomCard } from './IdiomCard';
 export type { IdiomCardProps } from './IdiomCard';
+
+export { LanguageSelector } from './LanguageSelector';
+export type { LanguageSelectorProps } from './LanguageSelector';
+
+export { CodeComparison } from './CodeComparison';
+export type { CodeComparisonProps } from './CodeComparison';
+
+export { FavoriteButton } from './FavoriteButton';
+export type { FavoriteButtonProps } from './FavoriteButton';

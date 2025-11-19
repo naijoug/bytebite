@@ -6,6 +6,7 @@ export interface Implementation {
   code: string;
   explanation: string;
   output?: string;
+  errorOutput?: string;
   designRationale?: string;
   pros?: string[];
   cons?: string[];

@@ -15,21 +15,15 @@
         "output": "[2, 4, 6, 8, 10]",
         "designRationale": "JavaScript 的 map 方法是函数式编程的核心，返回新数组而不修改原数组",
         "pros": ["简洁", "不可变性", "链式调用"],
-        "references": [
-          {
-            "title": "Array.prototype.map()",
-            "url": "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/map"
-          }
-        ]
+        "references": [{"title": "Array.prototype.map()", "url": "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/map"}]
       },
       {
         "languageId": "python",
-        "code": "numbers = [1, 2, 3, 4, 5]\ndoubled = list(map(lambda n: n * 2, numbers))\nprint(doubled)",
-        "explanation": "使用内置的 map 函数配合 lambda 表达式",
+        "code": "numbers = [1, 2, 3, 4, 5]\ndoubled = [n * 2 for n in numbers]\nprint(doubled)",
+        "explanation": "使用列表推导式进行数组转换",
         "output": "[2, 4, 6, 8, 10]",
-        "designRationale": "Python 的 map 返回迭代器，需要转换为列表。列表推导式是更 Pythonic 的方式",
-        "pros": ["函数式风格", "惰性求值"],
-        "cons": ["需要转换为列表", "列表推导式更常用"]
+        "designRationale": "Python 的列表推导式是最 Pythonic 的方式，比 map 函数更直观",
+        "pros": ["可读性强", "性能好", "简洁"]
       },
       {
         "languageId": "go",
@@ -39,6 +33,22 @@
         "designRationale": "Go 强调显式和简单，避免过度抽象",
         "pros": ["性能高", "代码清晰"],
         "cons": ["代码较长", "需要手动管理"]
+      },
+      {
+        "languageId": "rust",
+        "code": "fn main() {\n    let numbers = vec![1, 2, 3, 4, 5];\n    let doubled: Vec<i32> = numbers.iter().map(|n| n * 2).collect();\n    println!(\"{:?}\", doubled);\n}",
+        "explanation": "使用迭代器的 map 方法和 collect 收集结果",
+        "output": "[2, 4, 6, 8, 10]",
+        "designRationale": "Rust 的迭代器是零成本抽象，编译后性能与手写循环相同",
+        "pros": ["零成本抽象", "类型安全", "惰性求值"]
+      },
+      {
+        "languageId": "ruby",
+        "code": "numbers = [1, 2, 3, 4, 5]\ndoubled = numbers.map { |n| n * 2 }\nputs doubled.inspect",
+        "explanation": "使用 map 方法和代码块进行转换",
+        "output": "[2, 4, 6, 8, 10]",
+        "designRationale": "Ruby 的代码块语法使得高阶函数调用非常自然和优雅",
+        "pros": ["语法优雅", "简洁", "表达力强"]
       }
     ]
   },
@@ -61,7 +71,7 @@
       },
       {
         "languageId": "go",
-        "code": "func fetchData(url string) ([]byte, error) {\n\tresp, err := http.Get(url)\n\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"请求失败: %w\", err)\n\t}\n\tdefer resp.Body.Close()\n\t\n\tif resp.StatusCode != http.StatusOK {\n\t\treturn nil, fmt.Errorf(\"HTTP错误: %d\", resp.StatusCode)\n\t}\n\t\n\treturn io.ReadAll(resp.Body)\n}",
+        "code": "func fetchData(url string) ([]byte, error) {\n\tresp, err := http.Get(url)\n\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"请求失败: %w\", err)\n\t}\n\tdefer resp.Body.Close()\n\tif resp.StatusCode != http.StatusOK {\n\t\treturn nil, fmt.Errorf(\"HTTP错误: %d\", resp.StatusCode)\n\t}\n\treturn io.ReadAll(resp.Body)\n}",
         "explanation": "Go 使用显式的错误返回值，调用者必须检查错误",
         "designRationale": "Go 的错误处理哲学是将错误作为值返回，强制开发者显式处理",
         "pros": ["错误不会被忽略", "清晰的控制流"],
@@ -72,13 +82,15 @@
         "code": "use std::fs::File;\nuse std::io::Read;\n\nfn read_file(path: &str) -> Result<String, std::io::Error> {\n    let mut file = File::open(path)?;\n    let mut contents = String::new();\n    file.read_to_string(&mut contents)?;\n    Ok(contents)\n}",
         "explanation": "使用 Result 类型和 ? 操作符进行错误传播",
         "designRationale": "Rust 的 Result 类型强制处理错误，? 操作符提供简洁的错误传播",
-        "pros": ["类型安全", "零成本抽象", "编译时检查"],
-        "references": [
-          {
-            "title": "Error Handling",
-            "url": "https://doc.rust-lang.org/book/ch09-00-error-handling.html"
-          }
-        ]
+        "pros": ["类型安全", "零成本抽象", "编译时检查"]
+      },
+      {
+        "languageId": "java",
+        "code": "public String readFile(String path) throws IOException {\n    try (BufferedReader reader = new BufferedReader(new FileReader(path))) {\n        StringBuilder content = new StringBuilder();\n        String line;\n        while ((line = reader.readLine()) != null) {\n            content.append(line).append(\"\\n\");\n        }\n        return content.toString();\n    } catch (FileNotFoundException e) {\n        throw new IOException(\"文件不存在: \" + path, e);\n    }\n}",
+        "explanation": "使用 try-with-resources 自动管理资源，通过 throws 声明异常",
+        "designRationale": "Java 的检查异常强制调用者处理或声明异常",
+        "pros": ["自动资源管理", "异常层次清晰"],
+        "cons": ["样板代码多", "检查异常争议"]
       }
     ]
   },
@@ -86,7 +98,7 @@
     "id": "string-interpolation",
     "title": "字符串插值",
     "description": "在字符串中嵌入变量或表达式的值",
-    "category": "字符串操作",
+    "category": "字符串处理",
     "difficulty": "beginner",
     "paradigms": ["过程式"],
     "tags": ["字符串", "格式化", "模板"],
@@ -94,27 +106,691 @@
       {
         "languageId": "javascript",
         "code": "const name = 'Alice';\nconst age = 30;\nconst message = `Hello, ${name}! You are ${age} years old.`;\nconsole.log(message);",
-        "explanation": "使用模板字符串（反引号）和 ${} 语法",
+        "explanation": "使用模板字符串（反引号）和 ${} 语法进行字符串插值",
         "output": "Hello, Alice! You are 30 years old.",
-        "designRationale": "ES6 引入的模板字符串提供了清晰的字符串插值语法",
-        "pros": ["可读性强", "支持多行", "可嵌入表达式"]
+        "designRationale": "ES6 引入的模板字符串提供了更清晰的字符串插值语法",
+        "pros": ["语法简洁", "支持多行", "可以包含表达式"]
       },
       {
         "languageId": "python",
         "code": "name = 'Alice'\nage = 30\nmessage = f'Hello, {name}! You are {age} years old.'\nprint(message)",
-        "explanation": "使用 f-string（格式化字符串字面值）",
+        "explanation": "使用 f-string（格式化字符串字面量）进行字符串插值",
         "output": "Hello, Alice! You are 30 years old.",
         "designRationale": "Python 3.6+ 的 f-string 是最简洁和高效的字符串格式化方式",
-        "pros": ["简洁", "性能好", "支持表达式"]
+        "pros": ["简洁", "高性能", "可读性强"]
+      },
+      {
+        "languageId": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tname := \"Alice\"\n\tage := 30\n\tmessage := fmt.Sprintf(\"Hello, %s! You are %d years old.\", name, age)\n\tfmt.Println(message)\n}",
+        "explanation": "使用 fmt.Sprintf 函数和格式化占位符进行字符串格式化",
+        "output": "Hello, Alice! You are 30 years old.",
+        "designRationale": "Go 使用 C 风格的格式化字符串，强调显式和类型安全",
+        "pros": ["类型安全", "性能好"],
+        "cons": ["语法较冗长", "需要记忆格式化占位符"]
+      },
+      {
+        "languageId": "ruby",
+        "code": "name = 'Alice'\nage = 30\nmessage = \"Hello, #{name}! You are #{age} years old.\"\nputs message",
+        "explanation": "使用 #{} 语法在双引号字符串中进行插值",
+        "output": "Hello, Alice! You are 30 years old.",
+        "designRationale": "Ruby 的字符串插值语法简洁直观，是语言的核心特性",
+        "pros": ["语法简洁", "自然", "支持任意表达式"]
+      }
+    ]
+  },
+  {
+    "id": "array-filter",
+    "title": "数组过滤",
+    "description": "根据条件筛选数组元素，返回满足条件的新数组",
+    "category": "数据处理",
+    "difficulty": "beginner",
+    "paradigms": ["函数式"],
+    "tags": ["数组", "筛选", "高阶函数"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "const numbers = [1, 2, 3, 4, 5, 6];\nconst evens = numbers.filter(n => n % 2 === 0);\nconsole.log(evens);",
+        "explanation": "使用 filter 方法筛选偶数",
+        "output": "[2, 4, 6]",
+        "designRationale": "filter 方法返回新数组，保持原数组不变，符合函数式编程原则",
+        "pros": ["简洁", "不可变性", "可链式调用"]
+      },
+      {
+        "languageId": "python",
+        "code": "numbers = [1, 2, 3, 4, 5, 6]\nevens = [n for n in numbers if n % 2 == 0]\nprint(evens)",
+        "explanation": "使用列表推导式和条件表达式进行过滤",
+        "output": "[2, 4, 6]",
+        "designRationale": "列表推导式是 Python 中最惯用的过滤方式",
+        "pros": ["可读性强", "性能优秀", "简洁"]
       },
       {
         "languageId": "rust",
-        "code": "let name = \"Alice\";\nlet age = 30;\nlet message = format!(\"Hello, {}! You are {} years old.\", name, age);\nprintln!(\"{}\", message);",
-        "explanation": "使用 format! 宏进行字符串格式化",
-        "output": "Hello, Alice! You are 30 years old.",
-        "designRationale": "Rust 使用宏而非特殊语法，保持语言核心简洁",
-        "pros": ["类型安全", "编译时检查"],
-        "cons": ["语法相对冗长"]
+        "code": "fn main() {\n    let numbers = vec![1, 2, 3, 4, 5, 6];\n    let evens: Vec<i32> = numbers.into_iter().filter(|n| n % 2 == 0).collect();\n    println!(\"{:?}\", evens);\n}",
+        "explanation": "使用迭代器的 filter 方法进行筛选",
+        "output": "[2, 4, 6]",
+        "designRationale": "Rust 的迭代器提供零成本抽象，编译后性能与手写循环相同",
+        "pros": ["零成本抽象", "类型安全", "惰性求值"]
+      },
+      {
+        "languageId": "kotlin",
+        "code": "fun main() {\n    val numbers = listOf(1, 2, 3, 4, 5, 6)\n    val evens = numbers.filter { it % 2 == 0 }\n    println(evens)\n}",
+        "explanation": "使用 filter 高阶函数和 lambda 表达式",
+        "output": "[2, 4, 6]",
+        "designRationale": "Kotlin 的集合操作符简洁且类型安全",
+        "pros": ["简洁", "类型安全", "表达力强"]
+      }
+    ]
+  },
+  {
+    "id": "pattern-matching",
+    "title": "模式匹配",
+    "description": "根据值的结构和内容进行分支处理",
+    "category": "控制流",
+    "difficulty": "intermediate",
+    "paradigms": ["函数式"],
+    "tags": ["模式", "匹配", "分支"],
+    "implementations": [
+      {
+        "languageId": "rust",
+        "code": "enum Message {\n    Quit,\n    Move { x: i32, y: i32 },\n    Write(String),\n}\n\nfn process(msg: Message) {\n    match msg {\n        Message::Quit => println!(\"退出\"),\n        Message::Move { x, y } => println!(\"移动到 ({}, {})\", x, y),\n        Message::Write(text) => println!(\"写入: {}\", text),\n    }\n}",
+        "explanation": "使用 match 表达式对枚举进行模式匹配",
+        "designRationale": "Rust 的模式匹配是穷尽的，编译器确保所有情况都被处理",
+        "pros": ["类型安全", "穷尽性检查", "表达力强"]
+      },
+      {
+        "languageId": "swift",
+        "code": "enum Message {\n    case quit\n    case move(x: Int, y: Int)\n    case write(String)\n}\n\nfunc process(_ msg: Message) {\n    switch msg {\n    case .quit:\n        print(\"退出\")\n    case .move(let x, let y):\n        print(\"移动到 (\\(x), \\(y))\")\n    case .write(let text):\n        print(\"写入: \\(text)\")\n    }\n}",
+        "explanation": "使用 switch 语句对枚举进行模式匹配",
+        "designRationale": "Swift 的 switch 必须穷尽所有情况，提供编译时安全保证",
+        "pros": ["类型安全", "穷尽性检查", "语法清晰"]
+      },
+      {
+        "languageId": "python",
+        "code": "from dataclasses import dataclass\nfrom typing import Union\n\n@dataclass\nclass Quit: pass\n\n@dataclass\nclass Move:\n    x: int\n    y: int\n\n@dataclass\nclass Write:\n    text: str\n\nMessage = Union[Quit, Move, Write]\n\ndef process(msg: Message):\n    match msg:\n        case Quit():\n            print(\"退出\")\n        case Move(x, y):\n            print(f\"移动到 ({x}, {y})\")\n        case Write(text):\n            print(f\"写入: {text}\")",
+        "explanation": "Python 3.10+ 支持结构化模式匹配",
+        "designRationale": "Python 的模式匹配提供了更强大的分支处理能力",
+        "pros": ["表达力强", "可读性好", "支持复杂模式"]
+      }
+    ]
+  },
+  {
+    "id": "null-safety",
+    "title": "空值安全",
+    "description": "安全地处理可能为空的值，避免空指针异常",
+    "category": "类型系统",
+    "difficulty": "intermediate",
+    "paradigms": ["函数式"],
+    "tags": ["空值", "Option", "Maybe"],
+    "implementations": [
+      {
+        "languageId": "rust",
+        "code": "fn find_user(id: u32) -> Option<String> {\n    if id == 1 {\n        Some(String::from(\"Alice\"))\n    } else {\n        None\n    }\n}\n\nfn main() {\n    match find_user(1) {\n        Some(name) => println!(\"找到用户: {}\", name),\n        None => println!(\"用户不存在\"),\n    }\n}",
+        "explanation": "使用 Option 类型显式表示可能不存在的值",
+        "designRationale": "Rust 没有 null，使用 Option 类型强制处理空值情况",
+        "pros": ["编译时检查", "无空指针异常", "类型安全"]
+      },
+      {
+        "languageId": "kotlin",
+        "code": "fun findUser(id: Int): String? {\n    return if (id == 1) \"Alice\" else null\n}\n\nfun main() {\n    val user = findUser(1)\n    println(user?.uppercase() ?: \"用户不存在\")\n}",
+        "explanation": "使用可空类型和安全调用操作符",
+        "designRationale": "Kotlin 的类型系统区分可空和非空类型，提供编译时空安全",
+        "pros": ["类型安全", "简洁的语法", "编译时检查"]
+      },
+      {
+        "languageId": "swift",
+        "code": "func findUser(id: Int) -> String? {\n    return id == 1 ? \"Alice\" : nil\n}\n\nif let user = findUser(1) {\n    print(\"找到用户: \\(user)\")\n} else {\n    print(\"用户不存在\")\n}",
+        "explanation": "使用 Optional 类型和 if let 绑定",
+        "designRationale": "Swift 的 Optional 类型提供编译时空安全保证",
+        "pros": ["类型安全", "编译时检查", "清晰的语法"]
+      },
+      {
+        "languageId": "typescript",
+        "code": "function findUser(id: number): string | null {\n  return id === 1 ? 'Alice' : null;\n}\n\nconst user = findUser(1);\nif (user !== null) {\n  console.log(`找到用户: ${user}`);\n} else {\n  console.log('用户不存在');\n}",
+        "explanation": "使用联合类型表示可能为 null 的值",
+        "designRationale": "TypeScript 的严格空检查模式提供编译时空安全",
+        "pros": ["类型检查", "渐进式采用", "与 JavaScript 兼容"]
+      }
+    ]
+  },
+  {
+    "id": "async-await",
+    "title": "异步等待",
+    "description": "以同步的方式编写异步代码，提高可读性",
+    "category": "并发编程",
+    "difficulty": "intermediate",
+    "paradigms": ["异步编程"],
+    "tags": ["异步", "Promise", "Future"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "async function fetchUserData(userId) {\n  const response = await fetch(`/api/users/${userId}`);\n  const user = await response.json();\n  return user;\n}\n\nfetchUserData(1)\n  .then(user => console.log(user))\n  .catch(err => console.error(err));",
+        "explanation": "使用 async/await 语法处理 Promise",
+        "output": "{ id: 1, name: 'Alice' }",
+        "designRationale": "async/await 使异步代码看起来像同步代码，提高可读性",
+        "pros": ["可读性强", "错误处理清晰", "避免回调地狱"]
+      },
+      {
+        "languageId": "python",
+        "code": "import asyncio\nimport aiohttp\n\nasync def fetch_user_data(user_id):\n    async with aiohttp.ClientSession() as session:\n        async with session.get(f'/api/users/{user_id}') as response:\n            return await response.json()\n\nasyncio.run(fetch_user_data(1))",
+        "explanation": "使用 asyncio 和 async/await 进行异步编程",
+        "designRationale": "Python 的 asyncio 提供了协程支持，适合 I/O 密集型任务",
+        "pros": ["高效的 I/O", "简洁的语法", "生态系统支持"]
+      },
+      {
+        "languageId": "rust",
+        "code": "use tokio;\n\n#[tokio::main]\nasync fn main() {\n    let user = fetch_user_data(1).await;\n    println!(\"{:?}\", user);\n}\n\nasync fn fetch_user_data(user_id: u32) -> Result<User, Error> {\n    let response = reqwest::get(format!(\"https://api.example.com/users/{}\", user_id)).await?;\n    let user = response.json::<User>().await?;\n    Ok(user)\n}",
+        "explanation": "使用 async/await 和 tokio 运行时",
+        "designRationale": "Rust 的异步是零成本抽象，编译时生成状态机",
+        "pros": ["零成本抽象", "类型安全", "高性能"]
+      },
+      {
+        "languageId": "csharp",
+        "code": "using System.Net.Http;\nusing System.Threading.Tasks;\n\npublic async Task<User> FetchUserDataAsync(int userId)\n{\n    using var client = new HttpClient();\n    var response = await client.GetAsync($\"/api/users/{userId}\");\n    var user = await response.Content.ReadAsAsync<User>();\n    return user;\n}",
+        "explanation": "使用 async/await 和 Task",
+        "designRationale": "C# 的 async/await 是语言级特性，与 .NET 框架深度集成",
+        "pros": ["语言级支持", "异常处理清晰", "性能优秀"]
+      }
+    ]
+  },
+  {
+    "id": "destructuring",
+    "title": "解构赋值",
+    "description": "从数组或对象中提取值并赋给变量",
+    "category": "语法特性",
+    "difficulty": "beginner",
+    "paradigms": ["函数式"],
+    "tags": ["解构", "赋值", "模式"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "const person = { name: 'Alice', age: 30, city: 'Beijing' };\nconst { name, age } = person;\nconsole.log(name, age);\n\nconst numbers = [1, 2, 3, 4, 5];\nconst [first, second, ...rest] = numbers;\nconsole.log(first, second, rest);",
+        "explanation": "使用对象和数组解构语法",
+        "output": "Alice 30\n1 2 [3, 4, 5]",
+        "designRationale": "解构赋值使代码更简洁，避免重复访问属性",
+        "pros": ["简洁", "可读性强", "支持默认值"]
+      },
+      {
+        "languageId": "python",
+        "code": "person = {'name': 'Alice', 'age': 30, 'city': 'Beijing'}\nname, age = person['name'], person['age']\nprint(name, age)\n\nnumbers = [1, 2, 3, 4, 5]\nfirst, second, *rest = numbers\nprint(first, second, rest)",
+        "explanation": "使用元组解包和扩展解包",
+        "output": "Alice 30\n1 2 [3, 4, 5]",
+        "designRationale": "Python 的解包语法简洁直观，是语言的核心特性",
+        "pros": ["简洁", "自然", "支持扩展解包"]
+      },
+      {
+        "languageId": "rust",
+        "code": "struct Person {\n    name: String,\n    age: u32,\n}\n\nfn main() {\n    let person = Person { name: String::from(\"Alice\"), age: 30 };\n    let Person { name, age } = person;\n    println!(\"{} {}\", name, age);\n    \n    let numbers = vec![1, 2, 3, 4, 5];\n    let [first, second, ..] = numbers.as_slice() else { return };\n    println!(\"{} {}\", first, second);\n}",
+        "explanation": "使用结构体和切片模式匹配",
+        "designRationale": "Rust 的模式匹配提供强大的解构能力",
+        "pros": ["类型安全", "穷尽性检查", "表达力强"]
+      }
+    ]
+  },
+  {
+    "id": "closure",
+    "title": "闭包",
+    "description": "创建可以捕获外部变量的匿名函数",
+    "category": "函数式编程",
+    "difficulty": "intermediate",
+    "paradigms": ["函数式"],
+    "tags": ["闭包", "高阶函数", "作用域"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "function makeCounter() {\n  let count = 0;\n  return function() {\n    count++;\n    return count;\n  };\n}\n\nconst counter = makeCounter();\nconsole.log(counter()); // 1\nconsole.log(counter()); // 2",
+        "explanation": "闭包捕获外部变量 count，形成私有状态",
+        "output": "1\n2",
+        "designRationale": "JavaScript 的闭包是实现数据封装和模块化的核心机制",
+        "pros": ["数据封装", "状态保持", "灵活"]
+      },
+      {
+        "languageId": "python",
+        "code": "def make_counter():\n    count = 0\n    def counter():\n        nonlocal count\n        count += 1\n        return count\n    return counter\n\ncounter = make_counter()\nprint(counter())  # 1\nprint(counter())  # 2",
+        "explanation": "使用 nonlocal 关键字修改外部变量",
+        "output": "1\n2",
+        "designRationale": "Python 的闭包需要 nonlocal 声明才能修改外部变量",
+        "pros": ["简洁", "灵活", "支持装饰器"]
+      },
+      {
+        "languageId": "rust",
+        "code": "fn make_counter() -> impl FnMut() -> i32 {\n    let mut count = 0;\n    move || {\n        count += 1;\n        count\n    }\n}\n\nfn main() {\n    let mut counter = make_counter();\n    println!(\"{}\", counter()); // 1\n    println!(\"{}\", counter()); // 2\n}",
+        "explanation": "使用 move 关键字转移所有权到闭包",
+        "designRationale": "Rust 的闭包遵循所有权规则，确保内存安全",
+        "pros": ["内存安全", "零成本抽象", "类型推断"]
+      },
+      {
+        "languageId": "swift",
+        "code": "func makeCounter() -> () -> Int {\n    var count = 0\n    return {\n        count += 1\n        return count\n    }\n}\n\nlet counter = makeCounter()\nprint(counter()) // 1\nprint(counter()) // 2",
+        "explanation": "闭包自动捕获外部变量",
+        "output": "1\n2",
+        "designRationale": "Swift 的闭包语法简洁，自动管理捕获的变量",
+        "pros": ["简洁", "自动内存管理", "类型安全"]
+      }
+    ]
+  },
+  {
+    "id": "iterator-pattern",
+    "title": "迭代器模式",
+    "description": "遍历集合元素而不暴露其内部表示",
+    "category": "设计模式",
+    "difficulty": "intermediate",
+    "paradigms": ["面向对象", "函数式"],
+    "tags": ["迭代器", "遍历", "集合"],
+    "implementations": [
+      {
+        "languageId": "python",
+        "code": "class Countdown:\n    def __init__(self, start):\n        self.start = start\n    \n    def __iter__(self):\n        return self\n    \n    def __next__(self):\n        if self.start <= 0:\n            raise StopIteration\n        self.start -= 1\n        return self.start + 1\n\nfor num in Countdown(5):\n    print(num)",
+        "explanation": "实现 __iter__ 和 __next__ 方法创建迭代器",
+        "output": "5\n4\n3\n2\n1",
+        "designRationale": "Python 的迭代器协议使对象可以用于 for 循环",
+        "pros": ["内存高效", "惰性求值", "统一接口"]
+      },
+      {
+        "languageId": "rust",
+        "code": "struct Countdown {\n    count: u32,\n}\n\nimpl Iterator for Countdown {\n    type Item = u32;\n    \n    fn next(&mut self) -> Option<Self::Item> {\n        if self.count == 0 {\n            None\n        } else {\n            self.count -= 1;\n            Some(self.count + 1)\n        }\n    }\n}\n\nfn main() {\n    let countdown = Countdown { count: 5 };\n    for num in countdown {\n        println!(\"{}\", num);\n    }\n}",
+        "explanation": "实现 Iterator trait",
+        "output": "5\n4\n3\n2\n1",
+        "designRationale": "Rust 的迭代器是零成本抽象，提供丰富的组合子",
+        "pros": ["零成本抽象", "类型安全", "组合能力强"]
+      },
+      {
+        "languageId": "java",
+        "code": "import java.util.Iterator;\n\nclass Countdown implements Iterable<Integer> {\n    private int count;\n    \n    public Countdown(int start) {\n        this.count = start;\n    }\n    \n    public Iterator<Integer> iterator() {\n        return new Iterator<Integer>() {\n            private int current = count;\n            \n            public boolean hasNext() {\n                return current > 0;\n            }\n            \n            public Integer next() {\n                return current--;\n            }\n        };\n    }\n}",
+        "explanation": "实现 Iterable 和 Iterator 接口",
+        "designRationale": "Java 的迭代器模式是集合框架的核心",
+        "pros": ["类型安全", "标准接口", "广泛支持"]
+      }
+    ]
+  },
+  {
+    "id": "decorator-pattern",
+    "title": "装饰器模式",
+    "description": "动态地给对象添加额外的职责或功能",
+    "category": "设计模式",
+    "difficulty": "intermediate",
+    "paradigms": ["面向对象"],
+    "tags": ["装饰器", "元编程", "AOP"],
+    "implementations": [
+      {
+        "languageId": "python",
+        "code": "import time\n\ndef timing_decorator(func):\n    def wrapper(*args, **kwargs):\n        start = time.time()\n        result = func(*args, **kwargs)\n        end = time.time()\n        print(f\"{func.__name__} 耗时: {end - start:.4f}秒\")\n        return result\n    return wrapper\n\n@timing_decorator\ndef slow_function():\n    time.sleep(1)\n    return \"完成\"\n\nslow_function()",
+        "explanation": "使用 @ 语法应用装饰器",
+        "output": "slow_function 耗时: 1.0001秒",
+        "designRationale": "Python 的装饰器是语法糖，使代码更简洁优雅",
+        "pros": ["简洁", "可复用", "不侵入原代码"]
+      },
+      {
+        "languageId": "typescript",
+        "code": "function log(target: any, propertyKey: string, descriptor: PropertyDescriptor) {\n  const originalMethod = descriptor.value;\n  descriptor.value = function(...args: any[]) {\n    console.log(`调用 ${propertyKey}，参数:`, args);\n    return originalMethod.apply(this, args);\n  };\n  return descriptor;\n}\n\nclass Calculator {\n  @log\n  add(a: number, b: number) {\n    return a + b;\n  }\n}",
+        "explanation": "使用 TypeScript 装饰器语法",
+        "designRationale": "TypeScript 装饰器提供元编程能力，常用于框架开发",
+        "pros": ["类型安全", "元编程", "框架支持"]
+      },
+      {
+        "languageId": "java",
+        "code": "// 使用代理模式实现装饰器\ninterface Service {\n    void execute();\n}\n\nclass RealService implements Service {\n    public void execute() {\n        System.out.println(\"执行服务\");\n    }\n}\n\nclass LoggingDecorator implements Service {\n    private Service service;\n    \n    public LoggingDecorator(Service service) {\n        this.service = service;\n    }\n    \n    public void execute() {\n        System.out.println(\"开始执行\");\n        service.execute();\n        System.out.println(\"执行完成\");\n    }\n}",
+        "explanation": "通过包装对象实现装饰器",
+        "designRationale": "Java 使用接口和组合实现装饰器模式",
+        "pros": ["灵活", "符合开闭原则", "类型安全"]
+      }
+    ]
+  },
+  {
+    "id": "immutability",
+    "title": "不可变性",
+    "description": "创建不可修改的数据结构，避免副作用",
+    "category": "函数式编程",
+    "difficulty": "intermediate",
+    "paradigms": ["函数式"],
+    "tags": ["不可变", "纯函数", "副作用"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "const original = { name: 'Alice', age: 30 };\nconst updated = { ...original, age: 31 };\nconsole.log(original); // { name: 'Alice', age: 30 }\nconsole.log(updated);  // { name: 'Alice', age: 31 }\n\nconst arr = [1, 2, 3];\nconst newArr = [...arr, 4];\nconsole.log(arr);    // [1, 2, 3]\nconsole.log(newArr); // [1, 2, 3, 4]",
+        "explanation": "使用扩展运算符创建新对象和数组",
+        "output": "{ name: 'Alice', age: 30 }\n{ name: 'Alice', age: 31 }\n[1, 2, 3]\n[1, 2, 3, 4]",
+        "designRationale": "不可变性使代码更可预测，便于调试和测试",
+        "pros": ["可预测性", "线程安全", "易于调试"]
+      },
+      {
+        "languageId": "rust",
+        "code": "fn main() {\n    let original = vec![1, 2, 3];\n    let mut updated = original.clone();\n    updated.push(4);\n    \n    println!(\"{:?}\", original); // [1, 2, 3]\n    println!(\"{:?}\", updated);  // [1, 2, 3, 4]\n}",
+        "explanation": "Rust 默认不可变，需要显式声明 mut",
+        "output": "[1, 2, 3]\n[1, 2, 3, 4]",
+        "designRationale": "Rust 默认不可变，鼓励安全的编程实践",
+        "pros": ["默认安全", "编译时检查", "零成本"]
+      },
+      {
+        "languageId": "kotlin",
+        "code": "data class Person(val name: String, val age: Int)\n\nfun main() {\n    val original = Person(\"Alice\", 30)\n    val updated = original.copy(age = 31)\n    \n    println(original) // Person(name=Alice, age=30)\n    println(updated)  // Person(name=Alice, age=31)\n}",
+        "explanation": "使用 data class 的 copy 方法创建修改后的副本",
+        "output": "Person(name=Alice, age=30)\nPerson(name=Alice, age=31)",
+        "designRationale": "Kotlin 的 data class 提供便捷的不可变数据操作",
+        "pros": ["简洁", "类型安全", "内置支持"]
+      }
+    ]
+  },
+  {
+    "id": "method-chaining",
+    "title": "方法链式调用",
+    "description": "连续调用多个方法，每个方法返回对象本身",
+    "category": "语法特性",
+    "difficulty": "beginner",
+    "paradigms": ["面向对象", "函数式"],
+    "tags": ["链式调用", "流式API", "Builder"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "const result = [1, 2, 3, 4, 5, 6]\n  .filter(n => n % 2 === 0)\n  .map(n => n * 2)\n  .reduce((sum, n) => sum + n, 0);\n\nconsole.log(result);",
+        "explanation": "数组方法返回新数组，支持链式调用",
+        "output": "24",
+        "designRationale": "链式调用使数据转换流程清晰，代码更具表达力",
+        "pros": ["可读性强", "简洁", "函数式风格"]
+      },
+      {
+        "languageId": "python",
+        "code": "class QueryBuilder:\n    def __init__(self):\n        self.query = []\n    \n    def select(self, fields):\n        self.query.append(f\"SELECT {fields}\")\n        return self\n    \n    def from_table(self, table):\n        self.query.append(f\"FROM {table}\")\n        return self\n    \n    def where(self, condition):\n        self.query.append(f\"WHERE {condition}\")\n        return self\n    \n    def build(self):\n        return \" \".join(self.query)\n\nquery = QueryBuilder().select(\"*\").from_table(\"users\").where(\"age > 18\").build()\nprint(query)",
+        "explanation": "每个方法返回 self，实现链式调用",
+        "output": "SELECT * FROM users WHERE age > 18",
+        "designRationale": "Builder 模式通过链式调用构建复杂对象",
+        "pros": ["灵活", "可读性强", "易于扩展"]
+      },
+      {
+        "languageId": "rust",
+        "code": "fn main() {\n    let result = vec![1, 2, 3, 4, 5, 6]\n        .into_iter()\n        .filter(|n| n % 2 == 0)\n        .map(|n| n * 2)\n        .sum::<i32>();\n    \n    println!(\"{}\", result);\n}",
+        "explanation": "迭代器方法返回新迭代器，支持链式调用",
+        "output": "24",
+        "designRationale": "Rust 的迭代器链是零成本抽象",
+        "pros": ["零成本抽象", "类型安全", "惰性求值"]
+      }
+    ]
+  },
+  {
+    "id": "dependency-injection",
+    "title": "依赖注入",
+    "description": "通过外部传入依赖，而不是在内部创建",
+    "category": "设计模式",
+    "difficulty": "intermediate",
+    "paradigms": ["面向对象"],
+    "tags": ["依赖注入", "IoC", "解耦"],
+    "implementations": [
+      {
+        "languageId": "typescript",
+        "code": "interface Logger {\n  log(message: string): void;\n}\n\nclass ConsoleLogger implements Logger {\n  log(message: string) {\n    console.log(message);\n  }\n}\n\nclass UserService {\n  constructor(private logger: Logger) {}\n  \n  createUser(name: string) {\n    this.logger.log(`创建用户: ${name}`);\n    // 创建用户逻辑\n  }\n}\n\nconst logger = new ConsoleLogger();\nconst userService = new UserService(logger);",
+        "explanation": "通过构造函数注入依赖",
+        "designRationale": "依赖注入使代码更易测试和维护",
+        "pros": ["可测试性", "解耦", "灵活"]
+      },
+      {
+        "languageId": "java",
+        "code": "public interface Logger {\n    void log(String message);\n}\n\npublic class ConsoleLogger implements Logger {\n    public void log(String message) {\n        System.out.println(message);\n    }\n}\n\npublic class UserService {\n    private final Logger logger;\n    \n    public UserService(Logger logger) {\n        this.logger = logger;\n    }\n    \n    public void createUser(String name) {\n        logger.log(\"创建用户: \" + name);\n    }\n}",
+        "explanation": "通过构造函数注入依赖",
+        "designRationale": "Java 的 DI 框架（如 Spring）广泛使用这种模式",
+        "pros": ["可测试性", "解耦", "框架支持"]
+      },
+      {
+        "languageId": "python",
+        "code": "from abc import ABC, abstractmethod\n\nclass Logger(ABC):\n    @abstractmethod\n    def log(self, message: str):\n        pass\n\nclass ConsoleLogger(Logger):\n    def log(self, message: str):\n        print(message)\n\nclass UserService:\n    def __init__(self, logger: Logger):\n        self.logger = logger\n    \n    def create_user(self, name: str):\n        self.logger.log(f\"创建用户: {name}\")\n\nlogger = ConsoleLogger()\nuser_service = UserService(logger)",
+        "explanation": "通过构造函数注入依赖",
+        "designRationale": "Python 的鸭子类型使 DI 更灵活",
+        "pros": ["灵活", "易于测试", "解耦"]
+      }
+    ]
+  },
+  {
+    "id": "lazy-evaluation",
+    "title": "惰性求值",
+    "description": "延迟计算直到真正需要结果时才执行",
+    "category": "性能优化",
+    "difficulty": "intermediate",
+    "paradigms": ["函数式"],
+    "tags": ["惰性", "生成器", "性能"],
+    "implementations": [
+      {
+        "languageId": "python",
+        "code": "def fibonacci():\n    a, b = 0, 1\n    while True:\n        yield a\n        a, b = b, a + b\n\nfib = fibonacci()\nfor i, num in enumerate(fib):\n    if i >= 10:\n        break\n    print(num, end=' ')",
+        "explanation": "使用生成器实现惰性求值",
+        "output": "0 1 1 2 3 5 8 13 21 34",
+        "designRationale": "生成器按需生成值，节省内存",
+        "pros": ["内存高效", "支持无限序列", "性能好"]
+      },
+      {
+        "languageId": "rust",
+        "code": "fn main() {\n    let result = (1..)\n        .filter(|n| n % 2 == 0)\n        .map(|n| n * n)\n        .take(5)\n        .collect::<Vec<_>>();\n    \n    println!(\"{:?}\", result);\n}",
+        "explanation": "迭代器链是惰性的，只在 collect 时才执行",
+        "output": "[4, 16, 36, 64, 100]",
+        "designRationale": "Rust 的迭代器默认惰性，提高性能",
+        "pros": ["零成本抽象", "内存高效", "可组合"]
+      },
+      {
+        "languageId": "javascript",
+        "code": "function* fibonacci() {\n  let [a, b] = [0, 1];\n  while (true) {\n    yield a;\n    [a, b] = [b, a + b];\n  }\n}\n\nconst fib = fibonacci();\nfor (let i = 0; i < 10; i++) {\n  console.log(fib.next().value);\n}",
+        "explanation": "使用生成器函数实现惰性求值",
+        "output": "0\n1\n1\n2\n3\n5\n8\n13\n21\n34",
+        "designRationale": "生成器函数提供惰性计算能力",
+        "pros": ["内存高效", "支持无限序列", "暂停恢复"]
+      }
+    ]
+  },
+  {
+    "id": "builder-pattern",
+    "title": "建造者模式",
+    "description": "使用流式接口逐步构建复杂对象",
+    "category": "设计模式",
+    "difficulty": "intermediate",
+    "paradigms": ["面向对象"],
+    "tags": ["Builder", "构建", "流式API"],
+    "implementations": [
+      {
+        "languageId": "java",
+        "code": "public class User {\n    private final String name;\n    private final int age;\n    private final String email;\n    \n    private User(Builder builder) {\n        this.name = builder.name;\n        this.age = builder.age;\n        this.email = builder.email;\n    }\n    \n    public static class Builder {\n        private String name;\n        private int age;\n        private String email;\n        \n        public Builder name(String name) {\n            this.name = name;\n            return this;\n        }\n        \n        public Builder age(int age) {\n            this.age = age;\n            return this;\n        }\n        \n        public Builder email(String email) {\n            this.email = email;\n            return this;\n        }\n        \n        public User build() {\n            return new User(this);\n        }\n    }\n}\n\nUser user = new User.Builder()\n    .name(\"Alice\")\n    .age(30)\n    .email(\"alice@example.com\")\n    .build();",
+        "explanation": "使用内部 Builder 类构建不可变对象",
+        "designRationale": "Builder 模式适合构建具有多个可选参数的对象",
+        "pros": ["可读性强", "不可变性", "灵活"]
+      },
+      {
+        "languageId": "rust",
+        "code": "#[derive(Default)]\nstruct User {\n    name: String,\n    age: u32,\n    email: String,\n}\n\nimpl User {\n    fn builder() -> UserBuilder {\n        UserBuilder::default()\n    }\n}\n\n#[derive(Default)]\nstruct UserBuilder {\n    name: String,\n    age: u32,\n    email: String,\n}\n\nimpl UserBuilder {\n    fn name(mut self, name: impl Into<String>) -> Self {\n        self.name = name.into();\n        self\n    }\n    \n    fn age(mut self, age: u32) -> Self {\n        self.age = age;\n        self\n    }\n    \n    fn email(mut self, email: impl Into<String>) -> Self {\n        self.email = email.into();\n        self\n    }\n    \n    fn build(self) -> User {\n        User {\n            name: self.name,\n            age: self.age,\n            email: self.email,\n        }\n    }\n}\n\nlet user = User::builder()\n    .name(\"Alice\")\n    .age(30)\n    .email(\"alice@example.com\")\n    .build();",
+        "explanation": "使用 Builder 结构体和方法链",
+        "designRationale": "Rust 的 Builder 模式利用所有权系统确保类型安全",
+        "pros": ["类型安全", "零成本", "表达力强"]
+      },
+      {
+        "languageId": "typescript",
+        "code": "class User {\n  private constructor(\n    public readonly name: string,\n    public readonly age: number,\n    public readonly email: string\n  ) {}\n  \n  static builder() {\n    return new UserBuilder();\n  }\n}\n\nclass UserBuilder {\n  private name: string = '';\n  private age: number = 0;\n  private email: string = '';\n  \n  setName(name: string): this {\n    this.name = name;\n    return this;\n  }\n  \n  setAge(age: number): this {\n    this.age = age;\n    return this;\n  }\n  \n  setEmail(email: string): this {\n    this.email = email;\n    return this;\n  }\n  \n  build(): User {\n    return new User(this.name, this.age, this.email);\n  }\n}\n\nconst user = User.builder()\n  .setName('Alice')\n  .setAge(30)\n  .setEmail('alice@example.com')\n  .build();",
+        "explanation": "使用 Builder 类和方法链",
+        "designRationale": "TypeScript 的 Builder 模式提供类型安全的对象构建",
+        "pros": ["类型安全", "可读性强", "灵活"]
+      }
+    ]
+  },
+  {
+    "id": "memoization",
+    "title": "记忆化",
+    "description": "缓存函数结果以避免重复计算",
+    "category": "性能优化",
+    "difficulty": "intermediate",
+    "paradigms": ["函数式"],
+    "tags": ["缓存", "优化", "动态规划"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "function memoize(fn) {\n  const cache = new Map();\n  return function(...args) {\n    const key = JSON.stringify(args);\n    if (cache.has(key)) {\n      return cache.get(key);\n    }\n    const result = fn(...args);\n    cache.set(key, result);\n    return result;\n  };\n}\n\nconst fibonacci = memoize(function(n) {\n  if (n <= 1) return n;\n  return fibonacci(n - 1) + fibonacci(n - 2);\n});\n\nconsole.log(fibonacci(40));",
+        "explanation": "使用 Map 缓存函数结果",
+        "output": "102334155",
+        "designRationale": "记忆化将指数时间复杂度降低到线性",
+        "pros": ["性能提升显著", "透明", "易于实现"]
+      },
+      {
+        "languageId": "python",
+        "code": "from functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 2)\n\nprint(fibonacci(40))",
+        "explanation": "使用 functools.lru_cache 装饰器",
+        "output": "102334155",
+        "designRationale": "Python 标准库提供了高效的 LRU 缓存实现",
+        "pros": ["内置支持", "简单", "高效"]
+      },
+      {
+        "languageId": "rust",
+        "code": "use std::collections::HashMap;\n\nstruct Memoized<F> {\n    func: F,\n    cache: HashMap<u64, u64>,\n}\n\nimpl<F> Memoized<F>\nwhere\n    F: Fn(&mut Self, u64) -> u64,\n{\n    fn new(func: F) -> Self {\n        Memoized {\n            func,\n            cache: HashMap::new(),\n        }\n    }\n    \n    fn call(&mut self, arg: u64) -> u64 {\n        if let Some(&result) = self.cache.get(&arg) {\n            return result;\n        }\n        let result = (self.func)(self, arg);\n        self.cache.insert(arg, result);\n        result\n    }\n}\n\nfn main() {\n    let mut fib = Memoized::new(|memo, n| {\n        if n <= 1 {\n            n\n        } else {\n            memo.call(n - 1) + memo.call(n - 2)\n        }\n    });\n    \n    println!(\"{}\", fib.call(40));\n}",
+        "explanation": "使用 HashMap 实现记忆化",
+        "output": "102334155",
+        "designRationale": "Rust 需要显式管理缓存，但提供零成本抽象",
+        "pros": ["类型安全", "零成本", "可控"]
+      }
+    ]
+  },
+  {
+    "id": "pipeline-pattern",
+    "title": "管道模式",
+    "description": "将数据通过一系列转换函数进行处理",
+    "category": "函数式编程",
+    "difficulty": "intermediate",
+    "paradigms": ["函数式"],
+    "tags": ["管道", "组合", "数据流"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);\n\nconst addOne = x => x + 1;\nconst double = x => x * 2;\nconst square = x => x * x;\n\nconst transform = pipe(addOne, double, square);\n\nconsole.log(transform(3));",
+        "explanation": "使用 reduce 实现函数管道",
+        "output": "64",
+        "designRationale": "管道模式使数据转换流程清晰可读",
+        "pros": ["可读性强", "可组合", "函数式"]
+      },
+      {
+        "languageId": "rust",
+        "code": "fn main() {\n    let result = 3\n        .add_one()\n        .double()\n        .square();\n    \n    println!(\"{}\", result);\n}\n\ntrait Pipeline {\n    fn add_one(self) -> Self;\n    fn double(self) -> Self;\n    fn square(self) -> Self;\n}\n\nimpl Pipeline for i32 {\n    fn add_one(self) -> Self {\n        self + 1\n    }\n    \n    fn double(self) -> Self {\n        self * 2\n    }\n    \n    fn square(self) -> Self {\n        self * self\n    }\n}",
+        "explanation": "使用 trait 扩展方法实现管道",
+        "output": "64",
+        "designRationale": "Rust 的 trait 系统支持优雅的方法链",
+        "pros": ["类型安全", "零成本", "可扩展"]
+      },
+      {
+        "languageId": "python",
+        "code": "from functools import reduce\n\ndef pipe(*fns):\n    def pipeline(x):\n        return reduce(lambda v, f: f(v), fns, x)\n    return pipeline\n\nadd_one = lambda x: x + 1\ndouble = lambda x: x * 2\nsquare = lambda x: x * x\n\ntransform = pipe(add_one, double, square)\n\nprint(transform(3))",
+        "explanation": "使用 reduce 和 lambda 实现管道",
+        "output": "64",
+        "designRationale": "Python 的函数式特性支持管道模式",
+        "pros": ["简洁", "灵活", "可组合"]
+      }
+    ]
+  },
+  {
+    "id": "observer-pattern",
+    "title": "观察者模式",
+    "description": "定义对象间的一对多依赖关系，当对象状态改变时通知所有观察者",
+    "category": "设计模式",
+    "difficulty": "intermediate",
+    "paradigms": ["面向对象", "事件驱动"],
+    "tags": ["观察者", "事件", "发布订阅"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "class EventEmitter {\n  constructor() {\n    this.events = {};\n  }\n  \n  on(event, listener) {\n    if (!this.events[event]) {\n      this.events[event] = [];\n    }\n    this.events[event].push(listener);\n  }\n  \n  emit(event, ...args) {\n    if (this.events[event]) {\n      this.events[event].forEach(listener => listener(...args));\n    }\n  }\n}\n\nconst emitter = new EventEmitter();\nemitter.on('data', data => console.log('收到:', data));\nemitter.emit('data', 'Hello');",
+        "explanation": "实现简单的事件发射器",
+        "output": "收到: Hello",
+        "designRationale": "JavaScript 的事件驱动模型广泛使用观察者模式",
+        "pros": ["解耦", "灵活", "异步友好"]
+      },
+      {
+        "languageId": "java",
+        "code": "import java.util.*;\n\ninterface Observer {\n    void update(String message);\n}\n\nclass Subject {\n    private List<Observer> observers = new ArrayList<>();\n    \n    public void attach(Observer observer) {\n        observers.add(observer);\n    }\n    \n    public void notifyObservers(String message) {\n        for (Observer observer : observers) {\n            observer.update(message);\n        }\n    }\n}\n\nclass ConcreteObserver implements Observer {\n    private String name;\n    \n    public ConcreteObserver(String name) {\n        this.name = name;\n    }\n    \n    public void update(String message) {\n        System.out.println(name + \" 收到: \" + message);\n    }\n}",
+        "explanation": "使用接口实现观察者模式",
+        "designRationale": "Java 的观察者模式是经典的 GoF 设计模式实现",
+        "pros": ["类型安全", "解耦", "标准模式"]
+      },
+      {
+        "languageId": "python",
+        "code": "class Subject:\n    def __init__(self):\n        self._observers = []\n    \n    def attach(self, observer):\n        self._observers.append(observer)\n    \n    def notify(self, message):\n        for observer in self._observers:\n            observer.update(message)\n\nclass Observer:\n    def __init__(self, name):\n        self.name = name\n    \n    def update(self, message):\n        print(f\"{self.name} 收到: {message}\")\n\nsubject = Subject()\nobserver1 = Observer(\"观察者1\")\nobserver2 = Observer(\"观察者2\")\nsubject.attach(observer1)\nsubject.attach(observer2)\nsubject.notify(\"Hello\")",
+        "explanation": "使用类实现观察者模式",
+        "output": "观察者1 收到: Hello\n观察者2 收到: Hello",
+        "designRationale": "Python 的鸭子类型使观察者模式更灵活",
+        "pros": ["简洁", "灵活", "易于实现"]
+      }
+    ]
+  },
+  {
+    "id": "singleton-pattern",
+    "title": "单例模式",
+    "description": "确保一个类只有一个实例，并提供全局访问点",
+    "category": "设计模式",
+    "difficulty": "beginner",
+    "paradigms": ["面向对象"],
+    "tags": ["单例", "全局状态", "创建型模式"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "class Singleton {\n  constructor() {\n    if (Singleton.instance) {\n      return Singleton.instance;\n    }\n    this.data = [];\n    Singleton.instance = this;\n  }\n  \n  addData(item) {\n    this.data.push(item);\n  }\n  \n  getData() {\n    return this.data;\n  }\n}\n\nconst instance1 = new Singleton();\nconst instance2 = new Singleton();\nconsole.log(instance1 === instance2);",
+        "explanation": "使用静态属性存储唯一实例",
+        "output": "true",
+        "designRationale": "JavaScript 的单例模式通过闭包或静态属性实现",
+        "pros": ["简单", "全局访问", "延迟初始化"]
+      },
+      {
+        "languageId": "java",
+        "code": "public class Singleton {\n    private static volatile Singleton instance;\n    private List<String> data;\n    \n    private Singleton() {\n        data = new ArrayList<>();\n    }\n    \n    public static Singleton getInstance() {\n        if (instance == null) {\n            synchronized (Singleton.class) {\n                if (instance == null) {\n                    instance = new Singleton();\n                }\n            }\n        }\n        return instance;\n    }\n    \n    public void addData(String item) {\n        data.add(item);\n    }\n}",
+        "explanation": "使用双重检查锁定实现线程安全的单例",
+        "designRationale": "Java 的单例需要考虑线程安全和延迟初始化",
+        "pros": ["线程安全", "延迟初始化", "性能好"]
+      },
+      {
+        "languageId": "python",
+        "code": "class Singleton:\n    _instance = None\n    \n    def __new__(cls):\n        if cls._instance is None:\n            cls._instance = super().__new__(cls)\n            cls._instance.data = []\n        return cls._instance\n    \n    def add_data(self, item):\n        self.data.append(item)\n\ninstance1 = Singleton()\ninstance2 = Singleton()\nprint(instance1 is instance2)",
+        "explanation": "使用 __new__ 方法控制实例创建",
+        "output": "True",
+        "designRationale": "Python 的单例可以通过 __new__ 或装饰器实现",
+        "pros": ["简洁", "Pythonic", "灵活"]
+      },
+      {
+        "languageId": "rust",
+        "code": "use std::sync::Mutex;\nuse lazy_static::lazy_static;\n\nstruct Singleton {\n    data: Vec<String>,\n}\n\nimpl Singleton {\n    fn new() -> Self {\n        Singleton { data: Vec::new() }\n    }\n    \n    fn add_data(&mut self, item: String) {\n        self.data.push(item);\n    }\n}\n\nlazy_static! {\n    static ref INSTANCE: Mutex<Singleton> = Mutex::new(Singleton::new());\n}\n\nfn main() {\n    INSTANCE.lock().unwrap().add_data(\"Hello\".to_string());\n}",
+        "explanation": "使用 lazy_static 和 Mutex 实现线程安全的单例",
+        "designRationale": "Rust 的单例需要考虑所有权和线程安全",
+        "pros": ["线程安全", "类型安全", "零成本"]
+      }
+    ]
+  },
+  {
+    "id": "recursion",
+    "title": "递归",
+    "description": "函数调用自身来解决问题",
+    "category": "算法",
+    "difficulty": "intermediate",
+    "paradigms": ["函数式", "过程式"],
+    "tags": ["递归", "分治", "算法"],
+    "implementations": [
+      {
+        "languageId": "javascript",
+        "code": "function factorial(n) {\n  if (n <= 1) return 1;\n  return n * factorial(n - 1);\n}\n\nconsole.log(factorial(5));",
+        "explanation": "使用递归计算阶乘",
+        "output": "120",
+        "designRationale": "递归将问题分解为更小的子问题",
+        "pros": ["简洁", "表达力强", "适合树形结构"]
+      },
+      {
+        "languageId": "python",
+        "code": "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)\n\nprint(factorial(5))",
+        "explanation": "使用递归计算阶乘",
+        "output": "120",
+        "designRationale": "Python 的递归深度有限制，需要注意栈溢出",
+        "pros": ["简洁", "可读性强"],
+        "cons": ["递归深度限制", "性能开销"]
+      },
+      {
+        "languageId": "rust",
+        "code": "fn factorial(n: u64) -> u64 {\n    match n {\n        0 | 1 => 1,\n        _ => n * factorial(n - 1),\n    }\n}\n\nfn main() {\n    println!(\"{}\", factorial(5));\n}",
+        "explanation": "使用模式匹配和递归",
+        "output": "120",
+        "designRationale": "Rust 的递归可以被编译器优化为尾递归",
+        "pros": ["类型安全", "可优化", "表达力强"]
+      },
+      {
+        "languageId": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc factorial(n int) int {\n\tif n <= 1 {\n\t\treturn 1\n\t}\n\treturn n * factorial(n-1)\n}\n\nfunc main() {\n\tfmt.Println(factorial(5))\n}",
+        "explanation": "使用递归计算阶乘",
+        "output": "120",
+        "designRationale": "Go 支持递归但不进行尾调用优化",
+        "pros": ["简洁", "清晰"],
+        "cons": ["无尾调用优化", "栈空间限制"]
       }
     ]
   }

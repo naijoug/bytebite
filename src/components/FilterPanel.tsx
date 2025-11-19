@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo, useCallback, useMemo } from 'react';
 import type { FilterOptions } from '../types';
 import { Button } from './common';
 
@@ -10,13 +10,13 @@ export interface FilterPanelProps {
   availableLanguages?: string[];
 }
 
-export const FilterPanel = ({
+export const FilterPanel = memo(function FilterPanel({
   filters,
   onFilterChange,
   availableCategories = [],
   availableParadigms = [],
   availableLanguages = [],
-}: FilterPanelProps) => {
+}: FilterPanelProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const difficulties: Array<'beginner' | 'intermediate' | 'advanced'> = [
@@ -31,33 +31,40 @@ export const FilterPanel = ({
     advanced: '高级',
   };
 
-  const toggleFilter = <K extends keyof FilterOptions>(
-    key: K,
-    value: string
-  ) => {
-    const currentValues = (filters[key] as string[]) || [];
-    const newValues = currentValues.includes(value)
-      ? currentValues.filter((v) => v !== value)
-      : [...currentValues, value];
+  const toggleFilter = useCallback(
+    <K extends keyof FilterOptions>(key: K, value: string) => {
+      const currentValues = (filters[key] as string[]) || [];
+      const newValues = currentValues.includes(value)
+        ? currentValues.filter((v) => v !== value)
+        : [...currentValues, value];
 
-    onFilterChange({
-      ...filters,
-      [key]: newValues.length > 0 ? newValues : undefined,
-    });
-  };
+      onFilterChange({
+        ...filters,
+        [key]: newValues.length > 0 ? newValues : undefined,
+      });
+    },
+    [filters, onFilterChange]
+  );
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     onFilterChange({});
-  };
+  }, [onFilterChange]);
 
-  const hasActiveFilters =
-    (filters.categories?.length ?? 0) > 0 ||
-    (filters.paradigms?.length ?? 0) > 0 ||
-    (filters.difficulty?.length ?? 0) > 0 ||
-    (filters.languages?.length ?? 0) > 0;
+  const hasActiveFilters = useMemo(
+    () =>
+      (filters.categories?.length ?? 0) > 0 ||
+      (filters.paradigms?.length ?? 0) > 0 ||
+      (filters.difficulty?.length ?? 0) > 0 ||
+      (filters.languages?.length ?? 0) > 0,
+    [filters]
+  );
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div
+      className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
+      role="region"
+      aria-label="筛选面板"
+    >
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900">筛选</h3>
         <div className="flex items-center gap-2">
@@ -66,22 +73,24 @@ export const FilterPanel = ({
               variant="ghost"
               size="sm"
               onClick={clearFilters}
-              aria-label="清除所有筛选"
+              aria-label="清除所有筛选条件"
             >
               清除
             </Button>
           )}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="lg:hidden p-1 hover:bg-gray-100 rounded"
-            aria-label={isExpanded ? '收起筛选' : '展开筛选'}
+            className="lg:hidden p-2 min-w-[44px] min-h-[44px] hover:bg-gray-100 rounded active:bg-gray-200 transition-colors flex items-center justify-center"
+            aria-label={isExpanded ? '收起筛选面板' : '展开筛选面板'}
             aria-expanded={isExpanded}
+            aria-controls="filter-options"
           >
             <svg
               className={`h-5 w-5 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -95,100 +104,131 @@ export const FilterPanel = ({
       </div>
 
       <div
+        id="filter-options"
         className={`space-y-6 ${isExpanded ? 'block' : 'hidden'} lg:block`}
       >
         {/* Difficulty Filter */}
-        <div>
-          <h4 className="text-sm font-medium text-gray-700 mb-2">难度</h4>
-          <div className="space-y-2">
+        <fieldset>
+          <legend className="text-sm font-medium text-gray-700 mb-2">
+            难度
+          </legend>
+          <div className="space-y-2" role="group" aria-label="难度筛选选项">
             {difficulties.map((difficulty) => (
               <label
                 key={difficulty}
-                className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded"
+                className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded min-h-[44px] active:bg-gray-100 transition-colors"
               >
                 <input
                   type="checkbox"
                   checked={filters.difficulty?.includes(difficulty) ?? false}
                   onChange={() => toggleFilter('difficulty', difficulty)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  aria-label={`筛选难度：${difficultyLabels[difficulty]}`}
                 />
-                <span className="ml-2 text-sm text-gray-700">
+                <span className="ml-3 text-base text-gray-700">
                   {difficultyLabels[difficulty]}
                 </span>
               </label>
             ))}
           </div>
-        </div>
+        </fieldset>
 
         {/* Categories Filter */}
         {availableCategories.length > 0 && (
-          <div>
-            <h4 className="text-sm font-medium text-gray-700 mb-2">分类</h4>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
+          <fieldset>
+            <legend className="text-sm font-medium text-gray-700 mb-2">
+              分类
+            </legend>
+            <div
+              className="space-y-2 max-h-48 overflow-y-auto"
+              role="group"
+              aria-label="分类筛选选项"
+            >
               {availableCategories.map((category) => (
                 <label
                   key={category}
-                  className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded"
+                  className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded min-h-[44px] active:bg-gray-100 transition-colors"
                 >
                   <input
                     type="checkbox"
                     checked={filters.categories?.includes(category) ?? false}
                     onChange={() => toggleFilter('categories', category)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    aria-label={`筛选分类：${category}`}
                   />
-                  <span className="ml-2 text-sm text-gray-700">{category}</span>
+                  <span className="ml-3 text-base text-gray-700">
+                    {category}
+                  </span>
                 </label>
               ))}
             </div>
-          </div>
+          </fieldset>
         )}
 
         {/* Paradigms Filter */}
         {availableParadigms.length > 0 && (
-          <div>
-            <h4 className="text-sm font-medium text-gray-700 mb-2">范式</h4>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
+          <fieldset>
+            <legend className="text-sm font-medium text-gray-700 mb-2">
+              范式
+            </legend>
+            <div
+              className="space-y-2 max-h-48 overflow-y-auto"
+              role="group"
+              aria-label="范式筛选选项"
+            >
               {availableParadigms.map((paradigm) => (
                 <label
                   key={paradigm}
-                  className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded"
+                  className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded min-h-[44px] active:bg-gray-100 transition-colors"
                 >
                   <input
                     type="checkbox"
                     checked={filters.paradigms?.includes(paradigm) ?? false}
                     onChange={() => toggleFilter('paradigms', paradigm)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    aria-label={`筛选范式：${paradigm}`}
                   />
-                  <span className="ml-2 text-sm text-gray-700">{paradigm}</span>
+                  <span className="ml-3 text-base text-gray-700">
+                    {paradigm}
+                  </span>
                 </label>
               ))}
             </div>
-          </div>
+          </fieldset>
         )}
 
         {/* Languages Filter */}
         {availableLanguages.length > 0 && (
-          <div>
-            <h4 className="text-sm font-medium text-gray-700 mb-2">语言</h4>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
+          <fieldset>
+            <legend className="text-sm font-medium text-gray-700 mb-2">
+              语言
+            </legend>
+            <div
+              className="space-y-2 max-h-48 overflow-y-auto"
+              role="group"
+              aria-label="语言筛选选项"
+            >
               {availableLanguages.map((language) => (
                 <label
                   key={language}
-                  className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded"
+                  className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded min-h-[44px] active:bg-gray-100 transition-colors"
                 >
                   <input
                     type="checkbox"
                     checked={filters.languages?.includes(language) ?? false}
                     onChange={() => toggleFilter('languages', language)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    aria-label={`筛选语言：${language}`}
                   />
-                  <span className="ml-2 text-sm text-gray-700">{language}</span>
+                  <span className="ml-3 text-base text-gray-700">
+                    {language}
+                  </span>
                 </label>
               ))}
             </div>
-          </div>
+          </fieldset>
         )}
       </div>
     </div>
   );
-};
+});
