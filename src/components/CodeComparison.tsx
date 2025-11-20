@@ -24,6 +24,7 @@
  */
 
 import { useMemo, memo } from 'react';
+import 'prismjs';
 import * as Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css';
 import 'prismjs/components/prism-javascript';

@@ -28,7 +28,8 @@ import type { Idiom, Language } from '../types';
  */
 export async function loadIdioms(): Promise<Idiom[]> {
   try {
-    const response = await fetch('/src/data/idioms.json');
+    const idiomsUrl = new URL('../data/idioms.json', import.meta.url).href;
+    const response = await fetch(idiomsUrl);
     if (!response.ok) {
       throw new Error(`Failed to load idioms: ${response.status}`);
     }
@@ -47,7 +48,8 @@ export async function loadIdioms(): Promise<Idiom[]> {
  */
 export async function loadLanguages(): Promise<Language[]> {
   try {
-    const response = await fetch('/src/data/languages.json');
+    const languagesUrl = new URL('../data/languages.json', import.meta.url).href;
+    const response = await fetch(languagesUrl);
     if (!response.ok) {
       throw new Error(`Failed to load languages: ${response.status}`);
     }
