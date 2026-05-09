@@ -1,4 +1,9 @@
-import type { Idiom, FilterOptions } from '../types';
+import type { Idiom, FilterOptions, Language } from '../types';
+
+export interface LanguageFilterOption {
+  id: string;
+  name: string;
+}
 
 /**
  * 根据关键词搜索习语
@@ -189,4 +194,45 @@ export function getAvailableDifficulties(): Array<
   'beginner' | 'intermediate' | 'advanced'
 > {
   return ['beginner', 'intermediate', 'advanced'];
+}
+
+/**
+ * 获取所有有实现的语言 ID
+ *
+ * 从习语实现中提取唯一语言 ID，并按字母顺序排序
+ * 用于生成语言筛选选项，确保只展示当前数据集中真正可筛选的语言
+ *
+ * @param idioms - 习语数组
+ * @returns 排序后的语言 ID 数组
+ */
+export function getAvailableLanguageIds(idioms: Idiom[]): string[] {
+  const languageIds = new Set<string>();
+  idioms.forEach((idiom) => {
+    idiom.implementations.forEach((implementation) => {
+      languageIds.add(implementation.languageId);
+    });
+  });
+  return Array.from(languageIds).sort();
+}
+
+/**
+ * 获取语言筛选选项
+ *
+ * 只返回当前习语数据中有实现的语言，并优先使用语言数据中的展示名称。
+ * 如果语言数据尚未加载或缺少定义，则回退显示 languageId。
+ *
+ * @param idioms - 习语数组
+ * @param languages - 语言元数据数组
+ * @returns 可用于筛选面板的语言选项
+ */
+export function getAvailableLanguageOptions(
+  idioms: Idiom[],
+  languages: Language[]
+): LanguageFilterOption[] {
+  return getAvailableLanguageIds(idioms).map((languageId) => ({
+    id: languageId,
+    name:
+      languages.find((language) => language.id === languageId)?.name ||
+      languageId,
+  }));
 }

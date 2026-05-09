@@ -48,7 +48,8 @@ export async function loadIdioms(): Promise<Idiom[]> {
  */
 export async function loadLanguages(): Promise<Language[]> {
   try {
-    const languagesUrl = new URL('../data/languages.json', import.meta.url).href;
+    const languagesUrl = new URL('../data/languages.json', import.meta.url)
+      .href;
     const response = await fetch(languagesUrl);
     if (!response.ok) {
       throw new Error(`Failed to load languages: ${response.status}`);

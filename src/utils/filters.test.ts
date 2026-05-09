@@ -6,8 +6,10 @@ import {
   getAvailableCategories,
   getAvailableParadigms,
   getAvailableDifficulties,
+  getAvailableLanguageIds,
+  getAvailableLanguageOptions,
 } from './filters';
-import type { Idiom, FilterOptions } from '../types';
+import type { Idiom, FilterOptions, Language } from '../types';
 
 // 测试数据
 const mockIdioms: Idiom[] = [
@@ -68,6 +70,29 @@ const mockIdioms: Idiom[] = [
         explanation: 'Go goroutines',
       },
     ],
+  },
+];
+
+const mockLanguages: Language[] = [
+  {
+    id: 'javascript',
+    name: 'JavaScript',
+    version: 'ES2023',
+    paradigms: ['函数式'],
+    typeSystem: 'dynamic',
+    description: 'JavaScript language',
+    features: ['map'],
+    officialDocs: 'https://developer.mozilla.org/',
+  },
+  {
+    id: 'python',
+    name: 'Python',
+    version: '3.12',
+    paradigms: ['过程式'],
+    typeSystem: 'dynamic',
+    description: 'Python language',
+    features: ['list'],
+    officialDocs: 'https://docs.python.org/',
   },
 ];
 
@@ -222,5 +247,27 @@ describe('getAvailableDifficulties', () => {
   it('应该返回所有难度级别', () => {
     const difficulties = getAvailableDifficulties();
     expect(difficulties).toEqual(['beginner', 'intermediate', 'advanced']);
+  });
+});
+
+describe('getAvailableLanguageIds', () => {
+  it('应该返回所有唯一且排序后的语言 ID', () => {
+    const languageIds = getAvailableLanguageIds(mockIdioms);
+    expect(languageIds).toEqual(['go', 'javascript', 'python']);
+  });
+});
+
+describe('getAvailableLanguageOptions', () => {
+  it('应该只返回有实现的语言，并使用语言展示名称', () => {
+    const languageOptions = getAvailableLanguageOptions(
+      mockIdioms,
+      mockLanguages
+    );
+
+    expect(languageOptions).toEqual([
+      { id: 'go', name: 'go' },
+      { id: 'javascript', name: 'JavaScript' },
+      { id: 'python', name: 'Python' },
+    ]);
   });
 });

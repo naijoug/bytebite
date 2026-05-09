@@ -9,7 +9,7 @@
 ## ✨ 功能特性
 
 - 🔍 **智能搜索**: 快速搜索编程习语，支持关键词匹配
-- 🎯 **灵活筛选**: 按范式、难度、分类筛选内容
+- 🎯 **灵活筛选**: 按范式、难度、分类和语言筛选内容
 - 📊 **代码对比**: 并排展示多种语言的实现，支持2-4列动态布局
 - 🎨 **语法高亮**: 使用 Prism.js 提供清晰的代码高亮
 - 💾 **收藏功能**: 本地保存喜欢的习语，方便后续查看
@@ -191,9 +191,9 @@ npm run preview
 - **GitHub Pages**: 通过 GitHub Actions 自动部署
 
 详细部署指南请参考：
-- [DEPLOYMENT.md](./DEPLOYMENT.md) - 完整部署指南
-- [QUICK_DEPLOY.md](./QUICK_DEPLOY.md) - 快速部署指南
-- [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md) - 部署检查清单
+- [DEPLOYMENT.md](./docs/DEPLOYMENT.md) - 完整部署指南
+- [QUICK_DEPLOY.md](./docs/QUICK_DEPLOY.md) - 快速部署指南
+- [DEPLOYMENT_CHECKLIST.md](./docs/DEPLOYMENT_CHECKLIST.md) - 部署检查清单
 
 ### 环境变量
 
@@ -229,9 +229,9 @@ VITE_ENV=development
 
 - [数据格式文档](./docs/DATA_FORMAT.md) - 了解如何添加新的习语和语言
 - [贡献指南](./docs/CONTRIBUTING.md) - 如何为项目做贡献
-- [部署指南](./DEPLOYMENT.md) - 详细的部署说明
-- [性能优化](./PERFORMANCE_OPTIMIZATIONS.md) - 性能优化策略
-- [无障碍访问](./ACCESSIBILITY.md) - 无障碍功能说明
+- [部署指南](./docs/DEPLOYMENT.md) - 详细的部署说明
+- [性能优化](./docs/PERFORMANCE_OPTIMIZATIONS.md) - 性能优化策略
+- [无障碍访问](./docs/ACCESSIBILITY.md) - 无障碍功能说明
 
 ## 🧪 测试
 
@@ -264,7 +264,7 @@ npm run test:all
 - ⚡ 交互时间 (TTI) < 3.5s
 - ⚡ 代码高亮渲染 < 200ms
 
-性能优化策略详见 [PERFORMANCE_OPTIMIZATIONS.md](./PERFORMANCE_OPTIMIZATIONS.md)
+性能优化策略详见 [PERFORMANCE_OPTIMIZATIONS.md](./docs/PERFORMANCE_OPTIMIZATIONS.md)
 
 ## ♿ 无障碍访问
 
@@ -276,7 +276,7 @@ ByteBite 致力于为所有用户提供良好的体验：
 - ✅ 高对比度支持
 - ✅ 语义化 HTML
 
-详见 [ACCESSIBILITY.md](./ACCESSIBILITY.md)
+详见 [ACCESSIBILITY.md](./docs/ACCESSIBILITY.md)
 
 ## 📄 许可证
 

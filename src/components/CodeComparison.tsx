@@ -69,6 +69,12 @@ export const CodeComparison = memo(function CodeComparison({
       go: 'go',
       rust: 'rust',
       java: 'java',
+      csharp: 'csharp',
+      ruby: 'ruby',
+      php: 'php',
+      swift: 'swift',
+      kotlin: 'kotlin',
+      cpp: 'cpp',
     };
     return languageMap[languageId] || 'javascript';
   };

@@ -4,13 +4,20 @@ import { IdiomCard } from './IdiomCard';
 import { SearchBar } from './SearchBar';
 import { FilterPanel } from './FilterPanel';
 import { useDebounce } from '../hooks';
-import { searchAndFilterIdioms } from '../utils/filters';
+import { useAppContext } from '../contexts';
+import {
+  getAvailableCategories,
+  getAvailableLanguageOptions,
+  getAvailableParadigms,
+  searchAndFilterIdioms,
+} from '../utils/filters';
 
 export interface IdiomListProps {
   idioms: Idiom[];
 }
 
 export const IdiomList = memo(function IdiomList({ idioms }: IdiomListProps) {
+  const { languages } = useAppContext();
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<FilterOptions>({});
   const [showFilters, setShowFilters] = useState(false);
@@ -49,6 +56,10 @@ export const IdiomList = memo(function IdiomList({ idioms }: IdiomListProps) {
       (filters.languages && filters.languages.length > 0)
     );
   }, [searchQuery, filters]);
+
+  const availableLanguageOptions = useMemo(() => {
+    return getAvailableLanguageOptions(idioms, languages);
+  }, [idioms, languages]);
 
   return (
     <div className="space-y-6">
@@ -94,12 +105,9 @@ export const IdiomList = memo(function IdiomList({ idioms }: IdiomListProps) {
             <FilterPanel
               filters={filters}
               onFilterChange={handleFilterChange}
-              availableCategories={Array.from(
-                new Set(idioms.map((i) => i.category))
-              )}
-              availableParadigms={Array.from(
-                new Set(idioms.flatMap((i) => i.paradigms))
-              )}
+              availableCategories={getAvailableCategories(idioms)}
+              availableParadigms={getAvailableParadigms(idioms)}
+              availableLanguages={availableLanguageOptions}
             />
           </div>
         )}

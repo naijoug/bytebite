@@ -2,12 +2,17 @@ import { useState, memo, useCallback, useMemo } from 'react';
 import type { FilterOptions } from '../types';
 import { Button } from './common';
 
+export interface LanguageFilterOption {
+  id: string;
+  name: string;
+}
+
 export interface FilterPanelProps {
   filters: FilterOptions;
   onFilterChange: (filters: FilterOptions) => void;
   availableCategories?: string[];
   availableParadigms?: string[];
-  availableLanguages?: string[];
+  availableLanguages?: LanguageFilterOption[];
 }
 
 export const FilterPanel = memo(function FilterPanel({
@@ -210,18 +215,18 @@ export const FilterPanel = memo(function FilterPanel({
             >
               {availableLanguages.map((language) => (
                 <label
-                  key={language}
+                  key={language.id}
                   className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded min-h-[44px] active:bg-gray-100 transition-colors"
                 >
                   <input
                     type="checkbox"
-                    checked={filters.languages?.includes(language) ?? false}
-                    onChange={() => toggleFilter('languages', language)}
+                    checked={filters.languages?.includes(language.id) ?? false}
+                    onChange={() => toggleFilter('languages', language.id)}
                     className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    aria-label={`筛选语言：${language}`}
+                    aria-label={`筛选语言：${language.name}`}
                   />
                   <span className="ml-3 text-base text-gray-700">
-                    {language}
+                    {language.name}
                   </span>
                 </label>
               ))}
