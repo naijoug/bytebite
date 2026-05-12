@@ -126,6 +126,24 @@ describe('searchIdioms', () => {
     expect(result[0].id).toBe('test-3');
   });
 
+  it('应该根据实现语言搜索习语', () => {
+    const result = searchIdioms(mockIdioms, 'python');
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('test-1');
+  });
+
+  it('应该根据实现代码搜索习语', () => {
+    const result = searchIdioms(mockIdioms, 'goroutines');
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('test-3');
+  });
+
+  it('应该根据实现说明搜索习语', () => {
+    const result = searchIdioms(mockIdioms, 'try-catch');
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('test-2');
+  });
+
   it('应该不区分大小写搜索', () => {
     const result = searchIdioms(mockIdioms, '数组映射');
     expect(result).toHaveLength(1);

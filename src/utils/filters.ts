@@ -13,6 +13,7 @@ export interface LanguageFilterOption {
  * - 习语描述
  * - 习语标签
  * - 习语分类
+ * - 实现语言、代码和说明
  *
  * 搜索不区分大小写，会自动去除首尾空格
  *
@@ -51,6 +52,18 @@ export function searchIdioms(idioms: Idiom[], query: string): Idiom[] {
 
     // 搜索分类
     if (idiom.category.toLowerCase().includes(normalizedQuery)) {
+      return true;
+    }
+
+    // 搜索具体实现：语言、代码和说明
+    if (
+      idiom.implementations.some(
+        (implementation) =>
+          implementation.languageId.toLowerCase().includes(normalizedQuery) ||
+          implementation.code.toLowerCase().includes(normalizedQuery) ||
+          implementation.explanation.toLowerCase().includes(normalizedQuery)
+      )
+    ) {
       return true;
     }
 
