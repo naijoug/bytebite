@@ -17,7 +17,17 @@ const difficultyConfig = {
 export const IdiomCard = memo(function IdiomCard({ idiom }: IdiomCardProps) {
   const { isFavorite } = useAppContext();
   const difficulty = difficultyConfig[idiom.difficulty];
-  const languageCount = idiom.implementations.length;
+  const languageIds = Array.from(
+    new Set(
+      idiom.implementations.map((implementation) => implementation.languageId)
+    )
+  );
+  const languageCount = languageIds.length;
+  const visibleLanguageIds = languageIds.slice(0, 4);
+  const hiddenLanguageCount = Math.max(
+    languageCount - visibleLanguageIds.length,
+    0
+  );
   const favorited = isFavorite(idiom.id);
 
   return (
@@ -83,7 +93,7 @@ export const IdiomCard = memo(function IdiomCard({ idiom }: IdiomCardProps) {
             </div>
 
             {/* 底部信息 */}
-            <div className="mt-auto pt-3 border-t border-gray-100">
+            <div className="mt-auto pt-3 border-t border-gray-100 space-y-2">
               <div className="flex items-center justify-between text-sm text-gray-500">
                 <span className="flex items-center gap-1">
                   <svg
@@ -107,6 +117,28 @@ export const IdiomCard = memo(function IdiomCard({ idiom }: IdiomCardProps) {
                     {idiom.tags.slice(0, 2).join(', ')}
                     {idiom.tags.length > 2 && '...'}
                   </span>
+                )}
+              </div>
+
+              <div
+                className="flex flex-wrap gap-1.5"
+                role="list"
+                aria-label="支持语言"
+              >
+                {visibleLanguageIds.map((languageId) => (
+                  <Badge
+                    key={languageId}
+                    variant="default"
+                    size="sm"
+                    role="listitem"
+                  >
+                    {languageId}
+                  </Badge>
+                ))}
+                {hiddenLanguageCount > 0 && (
+                  <Badge variant="default" size="sm" role="listitem">
+                    +{hiddenLanguageCount}
+                  </Badge>
                 )}
               </div>
             </div>
