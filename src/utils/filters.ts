@@ -25,6 +25,19 @@ export interface ActiveFilterSummaryOptions {
   languages?: LanguageFilterOption[];
 }
 
+export type ActiveFilterSummaryItemType =
+  | 'query'
+  | 'category'
+  | 'paradigm'
+  | 'difficulty'
+  | 'language';
+
+export interface ActiveFilterSummaryItem {
+  type: ActiveFilterSummaryItemType;
+  label: string;
+  value: string;
+}
+
 const difficultyLabels: Record<Idiom['difficulty'], string> = {
   beginner: '初级',
   intermediate: '中级',
@@ -125,40 +138,64 @@ export function summarizeSearchMatchLabels(
  * 用于列表页结果统计和空状态，帮助用户理解“当前为什么只有这些结果”，也让清除
  * 筛选前的状态更容易复核。语言筛选优先展示语言名称，缺少元数据时回退到 languageId。
  */
-export function getActiveFilterSummaryLabels({
+export function getActiveFilterSummaryItems({
   query = '',
   filters = {},
   languages = [],
-}: ActiveFilterSummaryOptions): string[] {
-  const labels: string[] = [];
+}: ActiveFilterSummaryOptions): ActiveFilterSummaryItem[] {
+  const items: ActiveFilterSummaryItem[] = [];
   const normalizedQuery = query.trim();
 
   if (normalizedQuery) {
-    labels.push(`搜索：${normalizedQuery}`);
+    items.push({
+      type: 'query',
+      label: `搜索：${normalizedQuery}`,
+      value: normalizedQuery,
+    });
   }
 
   filters.categories?.forEach((category) => {
-    labels.push(`分类：${category}`);
+    items.push({
+      type: 'category',
+      label: `分类：${category}`,
+      value: category,
+    });
   });
 
   filters.paradigms?.forEach((paradigm) => {
-    labels.push(`范式：${paradigm}`);
+    items.push({
+      type: 'paradigm',
+      label: `范式：${paradigm}`,
+      value: paradigm,
+    });
   });
 
   filters.difficulty?.forEach((difficulty) => {
-    labels.push(`难度：${difficultyLabels[difficulty]}`);
+    items.push({
+      type: 'difficulty',
+      label: `难度：${difficultyLabels[difficulty]}`,
+      value: difficulty,
+    });
   });
 
   filters.languages?.forEach((languageId) => {
-    labels.push(
-      `语言：${
+    items.push({
+      type: 'language',
+      label: `语言：${
         languages.find((language) => language.id === languageId)?.name ||
         languageId
-      }`
-    );
+      }`,
+      value: languageId,
+    });
   });
 
-  return labels;
+  return items;
+}
+
+export function getActiveFilterSummaryLabels(
+  options: ActiveFilterSummaryOptions
+): string[] {
+  return getActiveFilterSummaryItems(options).map((item) => item.label);
 }
 
 /**

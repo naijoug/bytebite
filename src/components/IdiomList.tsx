@@ -6,13 +6,14 @@ import { FilterPanel } from './FilterPanel';
 import { useDebounce } from '../hooks';
 import { useAppContext } from '../contexts';
 import {
-  getActiveFilterSummaryLabels,
+  getActiveFilterSummaryItems,
   getAvailableCategories,
   getAvailableLanguageOptions,
   getAvailableParadigms,
   getIdiomSearchMatchLabels,
   searchAndFilterIdioms,
 } from '../utils/filters';
+import type { ActiveFilterSummaryItem } from '../utils/filters';
 
 export interface IdiomListProps {
   idioms: Idiom[];
@@ -63,13 +64,38 @@ export const IdiomList = memo(function IdiomList({ idioms }: IdiomListProps) {
     return getAvailableLanguageOptions(idioms, languages);
   }, [idioms, languages]);
 
-  const activeFilterSummaryLabels = useMemo(() => {
-    return getActiveFilterSummaryLabels({
+  const activeFilterSummaryItems = useMemo(() => {
+    return getActiveFilterSummaryItems({
       query: searchQuery,
       filters,
       languages: availableLanguageOptions,
     });
   }, [searchQuery, filters, availableLanguageOptions]);
+
+  const handleRemoveFilterItem = useCallback(
+    (item: ActiveFilterSummaryItem) => {
+      if (item.type === 'query') {
+        setSearchQuery('');
+        return;
+      }
+
+      const filterKeyByType = {
+        category: 'categories',
+        paradigm: 'paradigms',
+        difficulty: 'difficulty',
+        language: 'languages',
+      } as const;
+      const filterKey = filterKeyByType[item.type];
+
+      setFilters((currentFilters) => ({
+        ...currentFilters,
+        [filterKey]: currentFilters[filterKey]?.filter(
+          (value) => value !== item.value
+        ),
+      }));
+    },
+    []
+  );
 
   return (
     <div className="space-y-6">
@@ -153,13 +179,18 @@ export const IdiomList = memo(function IdiomList({ idioms }: IdiomListProps) {
         </div>
         {hasActiveFilters && (
           <div className="flex flex-wrap gap-2" aria-label="当前搜索和筛选条件">
-            {activeFilterSummaryLabels.map((label) => (
-              <span
-                key={label}
-                className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700"
+            {activeFilterSummaryItems.map((item) => (
+              <button
+                key={`${item.type}:${item.value}`}
+                type="button"
+                onClick={() => handleRemoveFilterItem(item)}
+                className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                aria-label={`移除条件：${item.label}`}
+                title={`移除条件：${item.label}`}
               >
-                {label}
-              </span>
+                <span>{item.label}</span>
+                <span aria-hidden="true">×</span>
+              </button>
             ))}
           </div>
         )}

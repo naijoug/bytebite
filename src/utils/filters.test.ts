@@ -11,6 +11,7 @@ import {
   getIdiomSearchMatchLabels,
   summarizeSearchMatchLabels,
   getActiveFilterSummaryLabels,
+  getActiveFilterSummaryItems,
 } from './filters';
 import type { Idiom, FilterOptions, Language } from '../types';
 
@@ -242,6 +243,29 @@ describe('getActiveFilterSummaryLabels', () => {
       '难度：高级',
       '语言：JavaScript',
       '语言：rust',
+    ]);
+  });
+});
+
+describe('getActiveFilterSummaryItems', () => {
+  it('应该保留每个摘要对应的类型和值用于单项移除', () => {
+    const items = getActiveFilterSummaryItems({
+      query: '  map  ',
+      filters: {
+        categories: ['数据处理'],
+        paradigms: ['函数式'],
+        difficulty: ['advanced'],
+        languages: ['javascript'],
+      },
+      languages: [{ id: 'javascript', name: 'JavaScript' }],
+    });
+
+    expect(items).toEqual([
+      { type: 'query', label: '搜索：map', value: 'map' },
+      { type: 'category', label: '分类：数据处理', value: '数据处理' },
+      { type: 'paradigm', label: '范式：函数式', value: '函数式' },
+      { type: 'difficulty', label: '难度：高级', value: 'advanced' },
+      { type: 'language', label: '语言：JavaScript', value: 'javascript' },
     ]);
   });
 });
