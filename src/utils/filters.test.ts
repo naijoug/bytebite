@@ -8,6 +8,7 @@ import {
   getAvailableDifficulties,
   getAvailableLanguageIds,
   getAvailableLanguageOptions,
+  getIdiomSearchMatchLabels,
 } from './filters';
 import type { Idiom, FilterOptions, Language } from '../types';
 
@@ -152,6 +153,28 @@ describe('searchIdioms', () => {
   it('应该返回空数组当没有匹配结果', () => {
     const result = searchIdioms(mockIdioms, '不存在的内容');
     expect(result).toHaveLength(0);
+  });
+});
+
+describe('getIdiomSearchMatchLabels', () => {
+  it('应该返回空数组当搜索词为空', () => {
+    const labels = getIdiomSearchMatchLabels(mockIdioms[0], '  ');
+    expect(labels).toEqual([]);
+  });
+
+  it('应该返回命中的基础字段标签', () => {
+    const labels = getIdiomSearchMatchLabels(mockIdioms[0], '数组');
+    expect(labels).toEqual(['标题', '描述', '标签']);
+  });
+
+  it('应该返回命中的实现字段标签', () => {
+    const labels = getIdiomSearchMatchLabels(mockIdioms[1], 'try-catch');
+    expect(labels).toEqual(['实现说明']);
+  });
+
+  it('应该支持不区分大小写匹配实现代码', () => {
+    const labels = getIdiomSearchMatchLabels(mockIdioms[2], 'FUNC');
+    expect(labels).toEqual(['实现代码']);
   });
 });
 

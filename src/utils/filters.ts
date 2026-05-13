@@ -5,6 +5,84 @@ export interface LanguageFilterOption {
   name: string;
 }
 
+export type SearchMatchLabel =
+  | '标题'
+  | '描述'
+  | '标签'
+  | '分类'
+  | '实现语言'
+  | '实现代码'
+  | '实现说明';
+
+function normalizeSearchQuery(query: string): string {
+  return query.toLowerCase().trim();
+}
+
+function includesQuery(value: string, normalizedQuery: string): boolean {
+  return value.toLowerCase().includes(normalizedQuery);
+}
+
+/**
+ * 返回单个习语被关键词命中的字段标签。
+ *
+ * 该函数用于列表页解释“为什么这条结果会出现”，与 searchIdioms
+ * 使用相同的搜索范围。查询为空时返回空数组，避免把无搜索状态误标成匹配。
+ */
+export function getIdiomSearchMatchLabels(
+  idiom: Idiom,
+  query: string
+): SearchMatchLabel[] {
+  const normalizedQuery = normalizeSearchQuery(query);
+
+  if (!normalizedQuery) {
+    return [];
+  }
+
+  const labels: SearchMatchLabel[] = [];
+
+  if (includesQuery(idiom.title, normalizedQuery)) {
+    labels.push('标题');
+  }
+
+  if (includesQuery(idiom.description, normalizedQuery)) {
+    labels.push('描述');
+  }
+
+  if (idiom.tags.some((tag) => includesQuery(tag, normalizedQuery))) {
+    labels.push('标签');
+  }
+
+  if (includesQuery(idiom.category, normalizedQuery)) {
+    labels.push('分类');
+  }
+
+  if (
+    idiom.implementations.some((implementation) =>
+      includesQuery(implementation.languageId, normalizedQuery)
+    )
+  ) {
+    labels.push('实现语言');
+  }
+
+  if (
+    idiom.implementations.some((implementation) =>
+      includesQuery(implementation.code, normalizedQuery)
+    )
+  ) {
+    labels.push('实现代码');
+  }
+
+  if (
+    idiom.implementations.some((implementation) =>
+      includesQuery(implementation.explanation, normalizedQuery)
+    )
+  ) {
+    labels.push('实现说明');
+  }
+
+  return labels;
+}
+
 /**
  * 根据关键词搜索习语
  *
@@ -32,26 +110,26 @@ export function searchIdioms(idioms: Idiom[], query: string): Idiom[] {
     return idioms;
   }
 
-  const normalizedQuery = query.toLowerCase().trim();
+  const normalizedQuery = normalizeSearchQuery(query);
 
   return idioms.filter((idiom) => {
     // 搜索标题
-    if (idiom.title.toLowerCase().includes(normalizedQuery)) {
+    if (includesQuery(idiom.title, normalizedQuery)) {
       return true;
     }
 
     // 搜索描述
-    if (idiom.description.toLowerCase().includes(normalizedQuery)) {
+    if (includesQuery(idiom.description, normalizedQuery)) {
       return true;
     }
 
     // 搜索标签
-    if (idiom.tags.some((tag) => tag.toLowerCase().includes(normalizedQuery))) {
+    if (idiom.tags.some((tag) => includesQuery(tag, normalizedQuery))) {
       return true;
     }
 
     // 搜索分类
-    if (idiom.category.toLowerCase().includes(normalizedQuery)) {
+    if (includesQuery(idiom.category, normalizedQuery)) {
       return true;
     }
 
@@ -59,9 +137,9 @@ export function searchIdioms(idioms: Idiom[], query: string): Idiom[] {
     if (
       idiom.implementations.some(
         (implementation) =>
-          implementation.languageId.toLowerCase().includes(normalizedQuery) ||
-          implementation.code.toLowerCase().includes(normalizedQuery) ||
-          implementation.explanation.toLowerCase().includes(normalizedQuery)
+          includesQuery(implementation.languageId, normalizedQuery) ||
+          includesQuery(implementation.code, normalizedQuery) ||
+          includesQuery(implementation.explanation, normalizedQuery)
       )
     ) {
       return true;

@@ -9,6 +9,7 @@ import {
   getAvailableCategories,
   getAvailableLanguageOptions,
   getAvailableParadigms,
+  getIdiomSearchMatchLabels,
   searchAndFilterIdioms,
 } from '../utils/filters';
 
@@ -149,7 +150,14 @@ export const IdiomList = memo(function IdiomList({ idioms }: IdiomListProps) {
           aria-label="编程习语列表"
         >
           {filteredIdioms.map((idiom) => (
-            <IdiomCard key={idiom.id} idiom={idiom} />
+            <IdiomCard
+              key={idiom.id}
+              idiom={idiom}
+              searchMatchLabels={getIdiomSearchMatchLabels(
+                idiom,
+                debouncedQuery
+              )}
+            />
           ))}
         </div>
       ) : (

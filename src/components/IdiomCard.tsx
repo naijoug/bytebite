@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom';
 import type { Idiom } from '../types';
 import { Card, Badge } from './common';
 import { useAppContext } from '../contexts';
+import type { SearchMatchLabel } from '../utils/filters';
 
 export interface IdiomCardProps {
   idiom: Idiom;
+  searchMatchLabels?: SearchMatchLabel[];
 }
 
 const difficultyConfig = {
@@ -14,7 +16,10 @@ const difficultyConfig = {
   advanced: { label: '高级', variant: 'danger' as const },
 };
 
-export const IdiomCard = memo(function IdiomCard({ idiom }: IdiomCardProps) {
+export const IdiomCard = memo(function IdiomCard({
+  idiom,
+  searchMatchLabels = [],
+}: IdiomCardProps) {
   const { isFavorite } = useAppContext();
   const difficulty = difficultyConfig[idiom.difficulty];
   const languageIds = Array.from(
@@ -94,6 +99,17 @@ export const IdiomCard = memo(function IdiomCard({ idiom }: IdiomCardProps) {
 
             {/* 底部信息 */}
             <div className="mt-auto pt-3 border-t border-gray-100 space-y-2">
+              {searchMatchLabels.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1.5 text-xs text-blue-700">
+                  <span className="font-medium">匹配：</span>
+                  {searchMatchLabels.map((label) => (
+                    <Badge key={label} variant="primary" size="sm">
+                      {label}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
               <div className="flex items-center justify-between text-sm text-gray-500">
                 <span className="flex items-center gap-1">
                   <svg
