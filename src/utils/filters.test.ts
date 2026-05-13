@@ -9,6 +9,7 @@ import {
   getAvailableLanguageIds,
   getAvailableLanguageOptions,
   getIdiomSearchMatchLabels,
+  summarizeSearchMatchLabels,
 } from './filters';
 import type { Idiom, FilterOptions, Language } from '../types';
 
@@ -175,6 +176,41 @@ describe('getIdiomSearchMatchLabels', () => {
   it('应该支持不区分大小写匹配实现代码', () => {
     const labels = getIdiomSearchMatchLabels(mockIdioms[2], 'FUNC');
     expect(labels).toEqual(['实现代码']);
+  });
+});
+
+describe('summarizeSearchMatchLabels', () => {
+  it('应该默认只展示前三个命中字段并统计隐藏数量', () => {
+    const summary = summarizeSearchMatchLabels([
+      '标题',
+      '描述',
+      '标签',
+      '分类',
+      '实现代码',
+    ]);
+
+    expect(summary).toEqual({
+      visibleLabels: ['标题', '描述', '标签'],
+      hiddenCount: 2,
+    });
+  });
+
+  it('应该支持自定义展示数量', () => {
+    const summary = summarizeSearchMatchLabels(['标题', '实现语言'], 1);
+
+    expect(summary).toEqual({
+      visibleLabels: ['标题'],
+      hiddenCount: 1,
+    });
+  });
+
+  it('展示数量小于零时不展示具体字段', () => {
+    const summary = summarizeSearchMatchLabels(['标题', '描述'], -1);
+
+    expect(summary).toEqual({
+      visibleLabels: [],
+      hiddenCount: 2,
+    });
   });
 });
 

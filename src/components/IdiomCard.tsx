@@ -3,7 +3,12 @@ import { Link } from 'react-router-dom';
 import type { Idiom } from '../types';
 import { Card, Badge } from './common';
 import { useAppContext } from '../contexts';
-import type { SearchMatchLabel } from '../utils/filters';
+import {
+  summarizeSearchMatchLabels,
+  type SearchMatchLabel,
+} from '../utils/filters';
+
+const MAX_VISIBLE_SEARCH_MATCH_LABELS = 3;
 
 export interface IdiomCardProps {
   idiom: Idiom;
@@ -34,6 +39,12 @@ export const IdiomCard = memo(function IdiomCard({
     0
   );
   const favorited = isFavorite(idiom.id);
+  const { visibleLabels, hiddenCount: hiddenSearchMatchLabelCount } =
+    summarizeSearchMatchLabels(
+      searchMatchLabels,
+      MAX_VISIBLE_SEARCH_MATCH_LABELS
+    );
+  const hasSearchMatchLabels = searchMatchLabels.length > 0;
 
   return (
     <article>
@@ -99,14 +110,26 @@ export const IdiomCard = memo(function IdiomCard({
 
             {/* 底部信息 */}
             <div className="mt-auto pt-3 border-t border-gray-100 space-y-2">
-              {searchMatchLabels.length > 0 && (
-                <div className="flex flex-wrap items-center gap-1.5 text-xs text-blue-700">
+              {hasSearchMatchLabels && (
+                <div
+                  className="flex flex-wrap items-center gap-1.5 text-xs text-blue-700"
+                  aria-label={`搜索命中：${searchMatchLabels.join('、')}`}
+                >
                   <span className="font-medium">匹配：</span>
-                  {searchMatchLabels.map((label) => (
+                  {visibleLabels.map((label) => (
                     <Badge key={label} variant="primary" size="sm">
                       {label}
                     </Badge>
                   ))}
+                  {hiddenSearchMatchLabelCount > 0 && (
+                    <Badge
+                      variant="primary"
+                      size="sm"
+                      aria-label={`另有 ${hiddenSearchMatchLabelCount} 个命中字段`}
+                    >
+                      +{hiddenSearchMatchLabelCount}
+                    </Badge>
+                  )}
                 </div>
               )}
 

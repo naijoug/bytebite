@@ -14,6 +14,11 @@ export type SearchMatchLabel =
   | '实现代码'
   | '实现说明';
 
+export interface SearchMatchLabelSummary {
+  visibleLabels: SearchMatchLabel[];
+  hiddenCount: number;
+}
+
 function normalizeSearchQuery(query: string): string {
   return query.toLowerCase().trim();
 }
@@ -81,6 +86,25 @@ export function getIdiomSearchMatchLabels(
   }
 
   return labels;
+}
+
+/**
+ * 将搜索命中字段压缩成适合卡片展示的摘要。
+ *
+ * 卡片空间有限，默认只展示前 3 个命中字段，其余用 +N 表示，避免标题、描述、
+ * 标签和实现字段同时命中时在结果列表里产生过多视觉噪声。
+ */
+export function summarizeSearchMatchLabels(
+  labels: SearchMatchLabel[],
+  maxVisible = 3
+): SearchMatchLabelSummary {
+  const visibleCount = Math.max(0, maxVisible);
+  const visibleLabels = labels.slice(0, visibleCount);
+
+  return {
+    visibleLabels,
+    hiddenCount: Math.max(labels.length - visibleLabels.length, 0),
+  };
 }
 
 /**
