@@ -6,6 +6,7 @@ import { FilterPanel } from './FilterPanel';
 import { useDebounce } from '../hooks';
 import { useAppContext } from '../contexts';
 import {
+  getActiveFilterSummaryLabels,
   getAvailableCategories,
   getAvailableLanguageOptions,
   getAvailableParadigms,
@@ -62,6 +63,14 @@ export const IdiomList = memo(function IdiomList({ idioms }: IdiomListProps) {
     return getAvailableLanguageOptions(idioms, languages);
   }, [idioms, languages]);
 
+  const activeFilterSummaryLabels = useMemo(() => {
+    return getActiveFilterSummaryLabels({
+      query: searchQuery,
+      filters,
+      languages: availableLanguageOptions,
+    });
+  }, [searchQuery, filters, availableLanguageOptions]);
+
   return (
     <div className="space-y-6">
       {/* 搜索和筛选控制栏 */}
@@ -115,30 +124,44 @@ export const IdiomList = memo(function IdiomList({ idioms }: IdiomListProps) {
       </div>
 
       {/* 结果统计和清除按钮 */}
-      <div
-        className="flex items-center justify-between"
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-      >
-        <p className="text-sm text-gray-600">
-          找到{' '}
-          <span className="font-semibold text-gray-900">
-            {filteredIdioms.length}
-          </span>{' '}
-          个习语
-          {idioms.length !== filteredIdioms.length && (
-            <span className="text-gray-400"> / 共 {idioms.length} 个</span>
+      <div className="space-y-3">
+        <div
+          className="flex items-center justify-between"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <p className="text-sm text-gray-600">
+            找到{' '}
+            <span className="font-semibold text-gray-900">
+              {filteredIdioms.length}
+            </span>{' '}
+            个习语
+            {idioms.length !== filteredIdioms.length && (
+              <span className="text-gray-400"> / 共 {idioms.length} 个</span>
+            )}
+          </p>
+          {hasActiveFilters && (
+            <button
+              onClick={handleClearFilters}
+              className="text-sm sm:text-base text-blue-600 hover:text-blue-700 active:text-blue-800 font-medium min-h-[44px] px-2 py-2"
+              aria-label="清除所有搜索和筛选条件"
+            >
+              清除筛选
+            </button>
           )}
-        </p>
+        </div>
         {hasActiveFilters && (
-          <button
-            onClick={handleClearFilters}
-            className="text-sm sm:text-base text-blue-600 hover:text-blue-700 active:text-blue-800 font-medium min-h-[44px] px-2 py-2"
-            aria-label="清除所有搜索和筛选条件"
-          >
-            清除筛选
-          </button>
+          <div className="flex flex-wrap gap-2" aria-label="当前搜索和筛选条件">
+            {activeFilterSummaryLabels.map((label) => (
+              <span
+                key={label}
+                className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700"
+              >
+                {label}
+              </span>
+            ))}
+          </div>
         )}
       </div>
 

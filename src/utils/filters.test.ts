@@ -10,6 +10,7 @@ import {
   getAvailableLanguageOptions,
   getIdiomSearchMatchLabels,
   summarizeSearchMatchLabels,
+  getActiveFilterSummaryLabels,
 } from './filters';
 import type { Idiom, FilterOptions, Language } from '../types';
 
@@ -211,6 +212,37 @@ describe('summarizeSearchMatchLabels', () => {
       visibleLabels: [],
       hiddenCount: 2,
     });
+  });
+});
+
+describe('getActiveFilterSummaryLabels', () => {
+  it('应该返回空数组当没有搜索和筛选条件', () => {
+    const labels = getActiveFilterSummaryLabels({});
+
+    expect(labels).toEqual([]);
+  });
+
+  it('应该生成人类可读的搜索和筛选条件摘要', () => {
+    const labels = getActiveFilterSummaryLabels({
+      query: '  map  ',
+      filters: {
+        categories: ['数据处理'],
+        paradigms: ['函数式'],
+        difficulty: ['beginner', 'advanced'],
+        languages: ['javascript', 'rust'],
+      },
+      languages: [{ id: 'javascript', name: 'JavaScript' }],
+    });
+
+    expect(labels).toEqual([
+      '搜索：map',
+      '分类：数据处理',
+      '范式：函数式',
+      '难度：初级',
+      '难度：高级',
+      '语言：JavaScript',
+      '语言：rust',
+    ]);
   });
 });
 

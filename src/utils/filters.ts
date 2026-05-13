@@ -19,6 +19,18 @@ export interface SearchMatchLabelSummary {
   hiddenCount: number;
 }
 
+export interface ActiveFilterSummaryOptions {
+  query?: string;
+  filters?: FilterOptions;
+  languages?: LanguageFilterOption[];
+}
+
+const difficultyLabels: Record<Idiom['difficulty'], string> = {
+  beginner: '初级',
+  intermediate: '中级',
+  advanced: '高级',
+};
+
 function normalizeSearchQuery(query: string): string {
   return query.toLowerCase().trim();
 }
@@ -105,6 +117,48 @@ export function summarizeSearchMatchLabels(
     visibleLabels,
     hiddenCount: Math.max(labels.length - visibleLabels.length, 0),
   };
+}
+
+/**
+ * 生成人类可读的当前搜索/筛选条件摘要。
+ *
+ * 用于列表页结果统计和空状态，帮助用户理解“当前为什么只有这些结果”，也让清除
+ * 筛选前的状态更容易复核。语言筛选优先展示语言名称，缺少元数据时回退到 languageId。
+ */
+export function getActiveFilterSummaryLabels({
+  query = '',
+  filters = {},
+  languages = [],
+}: ActiveFilterSummaryOptions): string[] {
+  const labels: string[] = [];
+  const normalizedQuery = query.trim();
+
+  if (normalizedQuery) {
+    labels.push(`搜索：${normalizedQuery}`);
+  }
+
+  filters.categories?.forEach((category) => {
+    labels.push(`分类：${category}`);
+  });
+
+  filters.paradigms?.forEach((paradigm) => {
+    labels.push(`范式：${paradigm}`);
+  });
+
+  filters.difficulty?.forEach((difficulty) => {
+    labels.push(`难度：${difficultyLabels[difficulty]}`);
+  });
+
+  filters.languages?.forEach((languageId) => {
+    labels.push(
+      `语言：${
+        languages.find((language) => language.id === languageId)?.name ||
+        languageId
+      }`
+    );
+  });
+
+  return labels;
 }
 
 /**
