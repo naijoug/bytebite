@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback, memo } from 'react';
 import type { Idiom, FilterOptions } from '../types';
 import { EmptyState } from './EmptyState';
 import { IdiomGrid } from './IdiomGrid';
+import { SearchResultSummary } from './SearchResultSummary';
 import { SearchBar } from './SearchBar';
 import { FilterPanel } from './FilterPanel';
 import { useDebounce } from '../hooks';
@@ -52,12 +53,12 @@ export const IdiomList = memo(function IdiomList({ idioms }: IdiomListProps) {
 
   // 检查是否有激活的筛选条件
   const hasActiveFilters = useMemo(() => {
-    return (
+    return Boolean(
       searchQuery.trim() !== '' ||
-      (filters.categories && filters.categories.length > 0) ||
-      (filters.paradigms && filters.paradigms.length > 0) ||
-      (filters.difficulty && filters.difficulty.length > 0) ||
-      (filters.languages && filters.languages.length > 0)
+        (filters.categories && filters.categories.length > 0) ||
+        (filters.paradigms && filters.paradigms.length > 0) ||
+        (filters.difficulty && filters.difficulty.length > 0) ||
+        (filters.languages && filters.languages.length > 0)
     );
   }, [searchQuery, filters]);
 
@@ -151,51 +152,14 @@ export const IdiomList = memo(function IdiomList({ idioms }: IdiomListProps) {
       </div>
 
       {/* 结果统计和清除按钮 */}
-      <div className="space-y-3">
-        <div
-          className="flex items-center justify-between"
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          <p className="text-sm text-gray-600">
-            找到{' '}
-            <span className="font-semibold text-gray-900">
-              {filteredIdioms.length}
-            </span>{' '}
-            个习语
-            {idioms.length !== filteredIdioms.length && (
-              <span className="text-gray-400"> / 共 {idioms.length} 个</span>
-            )}
-          </p>
-          {hasActiveFilters && (
-            <button
-              onClick={handleClearFilters}
-              className="text-sm sm:text-base text-blue-600 hover:text-blue-700 active:text-blue-800 font-medium min-h-[44px] px-2 py-2"
-              aria-label="清除所有搜索和筛选条件"
-            >
-              清除筛选
-            </button>
-          )}
-        </div>
-        {hasActiveFilters && (
-          <div className="flex flex-wrap gap-2" aria-label="当前搜索和筛选条件">
-            {activeFilterSummaryItems.map((item) => (
-              <button
-                key={`${item.type}:${item.value}`}
-                type="button"
-                onClick={() => handleRemoveFilterItem(item)}
-                className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-                aria-label={`移除条件：${item.label}`}
-                title={`移除条件：${item.label}`}
-              >
-                <span>{item.label}</span>
-                <span aria-hidden="true">×</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+      <SearchResultSummary
+        resultCount={filteredIdioms.length}
+        totalCount={idioms.length}
+        hasActiveFilters={hasActiveFilters}
+        activeFilterItems={activeFilterSummaryItems}
+        onClearFilters={handleClearFilters}
+        onRemoveFilterItem={handleRemoveFilterItem}
+      />
 
       {/* 习语列表 */}
       {filteredIdioms.length > 0 ? (

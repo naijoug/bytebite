@@ -33,6 +33,9 @@ export type {
   EmptyStateSize,
 } from './EmptyState';
 
+export { SearchResultSummary } from './SearchResultSummary';
+export type { SearchResultSummaryProps } from './SearchResultSummary';
+
 export { LanguageSelector } from './LanguageSelector';
 export type { LanguageSelectorProps } from './LanguageSelector';
 
