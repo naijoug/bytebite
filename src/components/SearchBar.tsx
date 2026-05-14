@@ -8,7 +8,9 @@ export interface SearchBarProps
 
 export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
   ({ onClear, value, className = '', ...props }, ref) => {
-    const showClearButton = value && String(value).length > 0;
+    const showClearButton = Boolean(
+      onClear && value && String(value).length > 0
+    );
 
     return (
       <div className={`relative ${className}`} role="search">
