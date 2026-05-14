@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts';
-import { IdiomCard, ErrorMessage } from '../components';
+import { IdiomGrid, ErrorMessage } from '../components';
 import { Card, Badge, Button, Spinner } from '../components/common';
 
 export function LanguagePage() {
@@ -236,11 +236,10 @@ export function LanguagePage() {
         </h2>
 
         {languageIdioms.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {languageIdioms.map((idiom) => (
-              <IdiomCard key={idiom.id} idiom={idiom} />
-            ))}
-          </div>
+          <IdiomGrid
+            idioms={languageIdioms}
+            ariaLabel={`${language.name} 实现的编程习语列表`}
+          />
         ) : (
           <Card>
             <div className="text-center py-8">

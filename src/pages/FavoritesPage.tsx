@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useAppContext } from '../contexts';
-import { IdiomCard } from '../components';
+import { IdiomGrid } from '../components';
 
 /**
  * 收藏列表页面
@@ -44,11 +44,7 @@ export function FavoritesPage() {
 
       {/* 收藏列表 */}
       {favoriteIdioms.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {favoriteIdioms.map((idiom) => (
-            <IdiomCard key={idiom.id} idiom={idiom} />
-          ))}
-        </div>
+        <IdiomGrid idioms={favoriteIdioms} ariaLabel="收藏的编程习语列表" />
       ) : (
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
           <svg

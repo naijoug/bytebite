@@ -23,6 +23,9 @@ export type { IdiomListProps } from './IdiomList';
 export { IdiomCard } from './IdiomCard';
 export type { IdiomCardProps } from './IdiomCard';
 
+export { IdiomGrid } from './IdiomGrid';
+export type { IdiomGridProps } from './IdiomGrid';
+
 export { LanguageSelector } from './LanguageSelector';
 export type { LanguageSelectorProps } from './LanguageSelector';
 

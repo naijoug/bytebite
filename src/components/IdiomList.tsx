@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, memo } from 'react';
 import type { Idiom, FilterOptions } from '../types';
-import { IdiomCard } from './IdiomCard';
+import { IdiomGrid } from './IdiomGrid';
 import { SearchBar } from './SearchBar';
 import { FilterPanel } from './FilterPanel';
 import { useDebounce } from '../hooks';
@@ -198,22 +198,13 @@ export const IdiomList = memo(function IdiomList({ idioms }: IdiomListProps) {
 
       {/* 习语列表 */}
       {filteredIdioms.length > 0 ? (
-        <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
-          role="list"
-          aria-label="编程习语列表"
-        >
-          {filteredIdioms.map((idiom) => (
-            <IdiomCard
-              key={idiom.id}
-              idiom={idiom}
-              searchMatchLabels={getIdiomSearchMatchLabels(
-                idiom,
-                debouncedQuery
-              )}
-            />
-          ))}
-        </div>
+        <IdiomGrid
+          idioms={filteredIdioms}
+          ariaLabel="编程习语列表"
+          getSearchMatchLabels={(idiom) =>
+            getIdiomSearchMatchLabels(idiom, debouncedQuery)
+          }
+        />
       ) : (
         <div className="text-center py-12" role="status">
           <svg
