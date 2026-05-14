@@ -36,6 +36,9 @@ export type {
 export { SearchResultSummary } from './SearchResultSummary';
 export type { SearchResultSummaryProps } from './SearchResultSummary';
 
+export { IdiomSearchControls } from './IdiomSearchControls';
+export type { IdiomSearchControlsProps } from './IdiomSearchControls';
+
 export { LanguageSelector } from './LanguageSelector';
 export type { LanguageSelectorProps } from './LanguageSelector';
 
