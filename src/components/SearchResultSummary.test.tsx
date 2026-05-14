@@ -1,55 +1,34 @@
 import { act, type ComponentProps } from 'react';
-import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import {
+  renderComponent,
+  cleanupRenderedComponents,
+} from '../test/renderComponent';
 import { SearchResultSummary } from './SearchResultSummary';
 import type { ActiveFilterSummaryItem } from '../utils/filters';
-
-(
-  globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }
-).IS_REACT_ACT_ENVIRONMENT = true;
-
-let container: HTMLDivElement | undefined;
-let root: Root | undefined;
 
 function renderSummary(
   props: Partial<ComponentProps<typeof SearchResultSummary>> = {}
 ) {
-  container = document.createElement('div');
-  document.body.appendChild(container);
-  root = createRoot(container);
-
   const defaultItems: ActiveFilterSummaryItem[] = [
     { type: 'query', value: 'map', label: '搜索：map' },
     { type: 'difficulty', value: 'advanced', label: '难度：高级' },
   ];
 
-  act(() => {
-    root?.render(
-      <SearchResultSummary
-        resultCount={2}
-        totalCount={10}
-        hasActiveFilters={true}
-        activeFilterItems={defaultItems}
-        onClearFilters={vi.fn()}
-        onRemoveFilterItem={vi.fn()}
-        {...props}
-      />
-    );
-  });
-
-  return container;
+  return renderComponent(
+    <SearchResultSummary
+      resultCount={2}
+      totalCount={10}
+      hasActiveFilters={true}
+      activeFilterItems={defaultItems}
+      onClearFilters={vi.fn()}
+      onRemoveFilterItem={vi.fn()}
+      {...props}
+    />
+  ).container;
 }
 
-afterEach(() => {
-  if (root) {
-    act(() => {
-      root?.unmount();
-    });
-  }
-  container?.remove();
-  root = undefined;
-  container = undefined;
-});
+afterEach(cleanupRenderedComponents);
 
 describe('SearchResultSummary', () => {
   it('展示筛选后的数量、总数和当前条件 chip', () => {
