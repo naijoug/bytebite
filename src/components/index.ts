@@ -26,6 +26,13 @@ export type { IdiomCardProps } from './IdiomCard';
 export { IdiomGrid } from './IdiomGrid';
 export type { IdiomGridProps } from './IdiomGrid';
 
+export { EmptyState } from './EmptyState';
+export type {
+  EmptyStateProps,
+  EmptyStateIcon,
+  EmptyStateSize,
+} from './EmptyState';
+
 export { LanguageSelector } from './LanguageSelector';
 export type { LanguageSelectorProps } from './LanguageSelector';
 

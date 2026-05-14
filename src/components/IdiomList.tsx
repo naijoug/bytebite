@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, memo } from 'react';
 import type { Idiom, FilterOptions } from '../types';
+import { EmptyState } from './EmptyState';
 import { IdiomGrid } from './IdiomGrid';
 import { SearchBar } from './SearchBar';
 import { FilterPanel } from './FilterPanel';
@@ -206,35 +207,23 @@ export const IdiomList = memo(function IdiomList({ idioms }: IdiomListProps) {
           }
         />
       ) : (
-        <div className="text-center py-12" role="status">
-          <svg
-            className="mx-auto h-12 w-12 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">未找到习语</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            可尝试标题、标签、语言、代码或实现说明关键词
-          </p>
-          {hasActiveFilters && (
-            <button
-              onClick={handleClearFilters}
-              className="mt-4 px-4 py-2 min-h-[44px] text-sm sm:text-base text-blue-600 hover:text-blue-700 active:text-blue-800 font-medium"
-              aria-label="清除所有搜索和筛选条件"
-            >
-              清除所有筛选
-            </button>
-          )}
-        </div>
+        <EmptyState
+          icon="search"
+          title="未找到习语"
+          description="可尝试标题、标签、语言、代码或实现说明关键词"
+          className="py-12"
+          action={
+            hasActiveFilters && (
+              <button
+                onClick={handleClearFilters}
+                className="px-4 py-2 min-h-[44px] text-sm sm:text-base text-blue-600 hover:text-blue-700 active:text-blue-800 font-medium"
+                aria-label="清除所有搜索和筛选条件"
+              >
+                清除所有筛选
+              </button>
+            )
+          }
+        />
       )}
     </div>
   );

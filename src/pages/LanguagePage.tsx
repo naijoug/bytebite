@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts';
-import { IdiomGrid, ErrorMessage } from '../components';
+import { EmptyState, IdiomGrid, ErrorMessage } from '../components';
 import { Card, Badge, Button, Spinner } from '../components/common';
 
 export function LanguagePage() {
@@ -242,22 +242,7 @@ export function LanguagePage() {
           />
         ) : (
           <Card>
-            <div className="text-center py-8">
-              <svg
-                className="w-12 h-12 text-gray-400 mx-auto mb-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <p className="text-gray-600">暂无该语言的编程习语实现</p>
-            </div>
+            <EmptyState icon="search" description="暂无该语言的编程习语实现" />
           </Card>
         )}
       </div>
