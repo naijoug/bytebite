@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { LanguagePage } from './LanguagePage';
+import { createTestIdiom, createTestLanguage } from '../test/fixtures';
 import type { Idiom, Language } from '../types';
 import {
   cleanupRenderedComponents,
@@ -48,17 +49,8 @@ vi.mock('../components', async (importOriginal) => {
 });
 
 const languages: Language[] = [
-  {
-    id: 'typescript',
-    name: 'TypeScript',
-    version: '5.x',
-    paradigms: ['Object-Oriented', 'Functional'],
-    typeSystem: 'static',
-    description: 'Typed JavaScript for scalable applications.',
-    features: ['Structural typing', 'Type inference'],
-    officialDocs: 'https://www.typescriptlang.org/docs/',
-  },
-  {
+  createTestLanguage(),
+  createTestLanguage({
     id: 'python',
     name: 'Python',
     version: '3.12',
@@ -67,17 +59,11 @@ const languages: Language[] = [
     description: 'Readable general-purpose programming language.',
     features: ['Batteries included'],
     officialDocs: 'https://docs.python.org/3/',
-  },
+  }),
 ];
 
 const idioms: Idiom[] = [
-  {
-    id: 'map-transform',
-    title: 'Map transform',
-    description: 'Transform each item in a collection.',
-    category: 'Collection',
-    difficulty: 'beginner',
-    paradigms: ['Functional'],
+  createTestIdiom({
     implementations: [
       {
         languageId: 'typescript',
@@ -90,9 +76,8 @@ const idioms: Idiom[] = [
         explanation: 'Maps over each item.',
       },
     ],
-    tags: ['array', 'map'],
-  },
-  {
+  }),
+  createTestIdiom({
     id: 'guard-clause',
     title: 'Guard clause',
     description: 'Return early for invalid states.',
@@ -107,7 +92,7 @@ const idioms: Idiom[] = [
       },
     ],
     tags: ['control-flow'],
-  },
+  }),
 ];
 
 function mockLanguagePageContext({

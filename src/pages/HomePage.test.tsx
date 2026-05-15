@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { HomePage } from './HomePage';
+import { createTestIdiom } from '../test/fixtures';
 import type { Idiom } from '../types';
 import {
   cleanupRenderedComponents,
@@ -32,23 +33,8 @@ afterEach(() => {
 });
 
 const idioms: Idiom[] = [
-  {
-    id: 'map-transform',
-    title: 'Map transform',
-    description: 'Transform each item in a collection.',
-    category: 'Collection',
-    difficulty: 'beginner',
-    paradigms: ['Functional'],
-    implementations: [
-      {
-        languageId: 'typescript',
-        code: 'items.map(fn)',
-        explanation: 'Maps over each item.',
-      },
-    ],
-    tags: ['array', 'map'],
-  },
-  {
+  createTestIdiom(),
+  createTestIdiom({
     id: 'guard-clause',
     title: 'Guard clause',
     description: 'Return early for invalid states.',
@@ -63,7 +49,7 @@ const idioms: Idiom[] = [
       },
     ],
     tags: ['control-flow'],
-  },
+  }),
 ];
 
 function mockHomePageContext({

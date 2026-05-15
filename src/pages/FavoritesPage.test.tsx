@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { FavoritesPage } from './FavoritesPage';
+import { createTestIdiom } from '../test/fixtures';
 import type { Idiom, UserPreferences } from '../types';
 import {
   cleanupRenderedComponents,
@@ -43,23 +44,8 @@ afterEach(() => {
 });
 
 const idioms: Idiom[] = [
-  {
-    id: 'map-transform',
-    title: 'Map transform',
-    description: 'Transform each item in a collection.',
-    category: 'Collection',
-    difficulty: 'beginner',
-    paradigms: ['Functional'],
-    implementations: [
-      {
-        languageId: 'typescript',
-        code: 'items.map(fn)',
-        explanation: 'Maps over each item.',
-      },
-    ],
-    tags: ['array', 'map'],
-  },
-  {
+  createTestIdiom(),
+  createTestIdiom({
     id: 'guard-clause',
     title: 'Guard clause',
     description: 'Return early for invalid states.',
@@ -74,8 +60,8 @@ const idioms: Idiom[] = [
       },
     ],
     tags: ['control-flow'],
-  },
-  {
+  }),
+  createTestIdiom({
     id: 'retry-backoff',
     title: 'Retry with backoff',
     description: 'Retry a transient operation with backoff.',
@@ -90,7 +76,7 @@ const idioms: Idiom[] = [
       },
     ],
     tags: ['retry'],
-  },
+  }),
 ];
 
 function mockFavoritesPageContext({
