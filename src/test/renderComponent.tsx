@@ -1,5 +1,6 @@
 import { act, type ReactNode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import { MemoryRouter, type MemoryRouterProps } from 'react-router-dom';
 
 (
   globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }
@@ -38,6 +39,13 @@ export function renderComponent(ui: ReactNode): RenderedComponent {
   renderedComponents.push(rendered);
 
   return rendered;
+}
+
+export function renderWithRouter(
+  ui: ReactNode,
+  routerProps?: MemoryRouterProps
+): RenderedComponent {
+  return renderComponent(<MemoryRouter {...routerProps}>{ui}</MemoryRouter>);
 }
 
 export function cleanupRenderedComponents() {

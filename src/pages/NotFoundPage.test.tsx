@@ -1,9 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
 import { NotFoundPage } from './NotFoundPage';
 import {
   cleanupRenderedComponents,
-  renderComponent,
+  renderWithRouter,
 } from '../test/renderComponent';
 
 afterEach(() => {
@@ -11,11 +10,7 @@ afterEach(() => {
 });
 
 function renderNotFoundPage() {
-  return renderComponent(
-    <MemoryRouter>
-      <NotFoundPage />
-    </MemoryRouter>
-  );
+  return renderWithRouter(<NotFoundPage />);
 }
 
 describe('NotFoundPage', () => {

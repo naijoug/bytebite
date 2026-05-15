@@ -1,11 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
 import { IdiomCard } from './IdiomCard';
 import type { Idiom } from '../types';
 import type { SearchMatchLabel } from '../utils/filters';
 import {
   cleanupRenderedComponents,
-  renderComponent,
+  renderWithRouter,
 } from '../test/renderComponent';
 
 const mockAppContext = vi.hoisted(() => ({
@@ -54,10 +53,8 @@ function renderIdiomCard(
   idiom: Idiom = baseIdiom,
   searchMatchLabels?: SearchMatchLabel[]
 ) {
-  return renderComponent(
-    <MemoryRouter>
-      <IdiomCard idiom={idiom} searchMatchLabels={searchMatchLabels} />
-    </MemoryRouter>
+  return renderWithRouter(
+    <IdiomCard idiom={idiom} searchMatchLabels={searchMatchLabels} />
   );
 }
 
