@@ -13,10 +13,12 @@
 
 ## 概述
 
-ByteBite 使用 JSON 格式存储所有数据，包括：
+ByteBite 使用 JSON 格式加载网站数据，包括：
 
 - **编程习语** (`src/data/idioms.json`): 包含所有编程习语及其在不同语言中的实现
 - **编程语言** (`src/data/languages.json`): 包含所有支持的编程语言信息
+
+其中 `src/data/idioms.json` 现在由 `npm run sync:tech-cards` 在构建前从 `../books/tech-cards-handbook/data/features/*.yaml` 同步生成；同 ID 的习语以 tech-cards-handbook 为准，尚未迁移到 handbook 的旧 ByteBite 数据会暂时保留。新增或修改跨语言特性时，优先编辑 tech-cards-handbook 的 YAML 主数据，不要直接手改生成后的 `idioms.json`。
 
 这些数据文件在构建时被打包到应用中，在运行时通过 HTTP 请求加载。
 

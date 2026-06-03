@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "sync:tech-cards": "node scripts/syncTechCards.mjs",
+    "build": "npm run sync:tech-cards && tsc -b && vite build",
     "build:preview": "VITE_ENV=preview npm run build",
     "build:production": "VITE_ENV=production npm run build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -53,7 +54,8 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.3",
     "vite": "npm:rolldown-vite@7.2.2",
-    "vitest": "^4.0.10"
+    "vitest": "^4.0.10",
+    "yaml": "^2.9.0"
   },
   "overrides": {
     "vite": "npm:rolldown-vite@7.2.2"

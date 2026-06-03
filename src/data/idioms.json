@@ -127,7 +127,7 @@
   {
     "id": "error-handling",
     "title": "错误处理",
-    "description": "处理可能失败的操作，优雅地处理错误情况",
+    "description": "处理可能失败的操作，并让调用方明确面对失败路径。",
     "category": "错误处理",
     "difficulty": "intermediate",
     "paradigms": [
@@ -139,83 +139,68 @@
       "异常",
       "Result"
     ],
+    "source": "tech-cards-handbook",
     "implementations": [
       {
         "languageId": "javascript",
-        "code": "async function fetchData(url) {\n  try {\n    const response = await fetch(url);\n    if (!response.ok) {\n      throw new Error(`HTTP error! status: ${response.status}`);\n    }\n    return await response.json();\n  } catch (error) {\n    console.error('获取数据失败:', error);\n    return null;\n  }\n}",
-        "explanation": "使用 try-catch 捕获异步操作中的错误",
-        "designRationale": "JavaScript 使用异常机制处理错误，配合 async/await 提供清晰的异步错误处理",
+        "code": "async function fetchData(url) {\n  try {\n    const response = await fetch(url);\n    if (!response.ok) {\n      throw new Error(`HTTP error: ${response.status}`);\n    }\n    return await response.json();\n  } catch (error) {\n    console.error('fetch failed:', error);\n    return null;\n  }\n}",
+        "explanation": "JavaScript 常用 try/catch 捕获同步和 async/await 中抛出的异常。",
+        "designRationale": "异常模型让正常路径保持简短，但调用边界必须明确处理失败。",
         "pros": [
-          "语法简洁",
-          "异步友好"
+          "语法统一",
+          "async/await 友好"
         ],
         "cons": [
-          "可能被忽略",
-          "性能开销"
+          "错误类型容易变得隐式"
         ]
       },
       {
         "languageId": "go",
-        "code": "func fetchData(url string) ([]byte, error) {\n\tresp, err := http.Get(url)\n\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"请求失败: %w\", err)\n\t}\n\tdefer resp.Body.Close()\n\tif resp.StatusCode != http.StatusOK {\n\t\treturn nil, fmt.Errorf(\"HTTP错误: %d\", resp.StatusCode)\n\t}\n\treturn io.ReadAll(resp.Body)\n}",
-        "explanation": "Go 使用显式的错误返回值，调用者必须检查错误",
-        "designRationale": "Go 的错误处理哲学是将错误作为值返回，强制开发者显式处理",
+        "code": "func fetchData(url string) ([]byte, error) {\n    resp, err := http.Get(url)\n    if err != nil {\n        return nil, fmt.Errorf(\"request failed: %w\", err)\n    }\n    defer resp.Body.Close()\n    return io.ReadAll(resp.Body)\n}",
+        "explanation": "Go 把 error 作为普通返回值，调用者需要显式检查并保留上下文。",
+        "designRationale": "显式错误返回让失败路径出现在控制流里，适合强调可读性和上下文包装。",
+        "sourceCard": "chapters/go/errors-keep-context.md",
         "pros": [
-          "错误不会被忽略",
-          "清晰的控制流"
+          "控制流清楚",
+          "错误上下文容易累积"
         ],
         "cons": [
-          "代码冗长",
-          "重复的 if err != nil"
+          "样板代码较多"
         ]
       },
       {
         "languageId": "rust",
-        "code": "use std::fs::File;\nuse std::io::Read;\n\nfn read_file(path: &str) -> Result<String, std::io::Error> {\n    let mut file = File::open(path)?;\n    let mut contents = String::new();\n    file.read_to_string(&mut contents)?;\n    Ok(contents)\n}",
-        "explanation": "使用 Result 类型和 ? 操作符进行错误传播",
-        "designRationale": "Rust 的 Result 类型强制处理错误，? 操作符提供简洁的错误传播",
+        "code": "use std::fs;\n\nfn load_config(path: &str) -> Result<String, std::io::Error> {\n    let text = fs::read_to_string(path)?;\n    Ok(text)\n}",
+        "explanation": "Rust 使用 Result<T, E> 把成功值和失败原因放进类型系统，? 用于传播错误。",
+        "designRationale": "Result 让可能失败的函数在签名上可见，调用方无法忽略失败分支。",
+        "sourceCard": "chapters/rust/result-means-failable-with-reason.md",
         "pros": [
-          "类型安全",
-          "零成本抽象",
-          "编译时检查"
+          "编译期强制处理",
+          "成功和失败状态清晰"
         ]
       },
       {
         "languageId": "java",
-        "code": "public String readFile(String path) throws IOException {\n    try (BufferedReader reader = new BufferedReader(new FileReader(path))) {\n        StringBuilder content = new StringBuilder();\n        String line;\n        while ((line = reader.readLine()) != null) {\n            content.append(line).append(\"\\n\");\n        }\n        return content.toString();\n    } catch (FileNotFoundException e) {\n        throw new IOException(\"文件不存在: \" + path, e);\n    }\n}",
-        "explanation": "使用 try-with-resources 自动管理资源，通过 throws 声明异常",
-        "designRationale": "Java 的检查异常强制调用者处理或声明异常",
+        "code": "public String readFile(String path) throws IOException {\n    try (BufferedReader reader = new BufferedReader(new FileReader(path))) {\n        return reader.lines().collect(Collectors.joining(\"\\n\"));\n    } catch (FileNotFoundException error) {\n        throw new IOException(\"file not found: \" + path, error);\n    }\n}",
+        "explanation": "Java 使用异常表达失败，try-with-resources 负责释放资源，throws 暴露失败边界。",
+        "designRationale": "检查异常让部分失败路径进入方法签名，资源管理语法减少遗漏关闭的问题。",
         "pros": [
-          "自动资源管理",
-          "异常层次清晰"
+          "异常层次清晰",
+          "自动资源管理"
         ],
         "cons": [
-          "样板代码多",
-          "检查异常争议"
+          "样板代码偏多"
         ]
       },
       {
         "languageId": "php",
-        "code": "<?php\nfunction divide(int $a, int $b): int {\n    if ($b === 0) throw new InvalidArgumentException('除数不能为零');\n    return intdiv($a, $b);\n}\n\ntry {\n    echo divide(10, 0);\n} catch (InvalidArgumentException $e) {\n    echo '错误: ' . $e->getMessage();\n}",
-        "explanation": "通过 throw / try-catch 处理异常，类型化的异常便于精准捕获",
-        "output": "错误: 除数不能为零",
-        "designRationale": "PHP 7+ 把错误也归一为异常体系，配合 finally 可实现资源清理",
+        "code": "<?php\nfunction divide(int $a, int $b): int {\n    if ($b === 0) {\n        throw new InvalidArgumentException('divisor cannot be zero');\n    }\n    return intdiv($a, $b);\n}\n\ntry {\n    echo divide(10, 0);\n} catch (InvalidArgumentException $error) {\n    echo $error->getMessage();\n}",
+        "explanation": "PHP 使用 throw 与 try/catch 表达异常路径，类型化异常便于精准捕获。",
+        "output": "divisor cannot be zero",
+        "designRationale": "对不可恢复或违反前置条件的情况抛异常，可以避免返回值混杂成功和失败。",
         "pros": [
-          "统一异常体系",
-          "支持类型化捕获"
-        ]
-      },
-      {
-        "languageId": "cpp",
-        "code": "#include <iostream>\n#include <stdexcept>\n\nint divide(int a, int b) {\n    if (b == 0) throw std::invalid_argument(\"除数不能为零\");\n    return a / b;\n}\n\nint main() {\n    try {\n        std::cout << divide(10, 0);\n    } catch (const std::invalid_argument& e) {\n        std::cout << \"错误: \" << e.what();\n    }\n}",
-        "explanation": "通过继承自 std::exception 的异常类型分层捕获",
-        "output": "错误: 除数不能为零",
-        "designRationale": "C++ 异常零开销原则:不抛出时无运行时代价，但抛出代价较大",
-        "pros": [
-          "分层捕获",
-          "RAII 配合自动清理资源"
-        ],
-        "cons": [
-          "实时/嵌入式场景常被禁用"
+          "调用边界明确",
+          "可按异常类型处理"
         ]
       }
     ]
@@ -223,7 +208,7 @@
   {
     "id": "string-interpolation",
     "title": "字符串插值",
-    "description": "在字符串中嵌入变量或表达式的值",
+    "description": "在字符串中嵌入变量或表达式的值，避免用零散拼接破坏可读性。",
     "category": "字符串处理",
     "difficulty": "beginner",
     "paradigms": [
@@ -234,91 +219,66 @@
       "格式化",
       "模板"
     ],
+    "source": "tech-cards-handbook",
     "implementations": [
       {
         "languageId": "javascript",
         "code": "const name = 'Alice';\nconst age = 30;\nconst message = `Hello, ${name}! You are ${age} years old.`;\nconsole.log(message);",
-        "explanation": "使用模板字符串（反引号）和 ${} 语法进行字符串插值",
+        "explanation": "JavaScript 使用模板字符串和 ${...} 嵌入变量或表达式。",
         "output": "Hello, Alice! You are 30 years old.",
-        "designRationale": "ES6 引入的模板字符串提供了更清晰的字符串插值语法",
+        "designRationale": "模板字符串把文本与表达式放在同一个字面量里，比字符串拼接更适合多变量文本。",
         "pros": [
-          "语法简洁",
-          "支持多行",
-          "可以包含表达式"
+          "可读性强",
+          "支持多行字符串"
+        ],
+        "references": [
+          {
+            "title": "Template literals - MDN",
+            "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals"
+          }
         ]
       },
       {
         "languageId": "python",
-        "code": "name = 'Alice'\nage = 30\nmessage = f'Hello, {name}! You are {age} years old.'\nprint(message)",
-        "explanation": "使用 f-string（格式化字符串字面量）进行字符串插值",
+        "code": "name = \"Alice\"\nage = 30\nmessage = f\"Hello, {name}! You are {age} years old.\"\nprint(message)",
+        "explanation": "Python 使用 f-string 在字符串中嵌入变量和表达式。",
         "output": "Hello, Alice! You are 30 years old.",
-        "designRationale": "Python 3.6+ 的 f-string 是最简洁和高效的字符串格式化方式",
+        "designRationale": "f-string 是 Python 3 中最直接的字符串格式化方式，表达式位置清晰。",
         "pros": [
           "简洁",
-          "高性能",
-          "可读性强"
+          "表达式可直接求值"
+        ],
+        "references": [
+          {
+            "title": "Formatted string literals - Python Docs",
+            "url": "https://docs.python.org/3/reference/lexical_analysis.html#f-strings"
+          }
         ]
       },
       {
         "languageId": "go",
-        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tname := \"Alice\"\n\tage := 30\n\tmessage := fmt.Sprintf(\"Hello, %s! You are %d years old.\", name, age)\n\tfmt.Println(message)\n}",
-        "explanation": "使用 fmt.Sprintf 函数和格式化占位符进行字符串格式化",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    name := \"Alice\"\n    age := 30\n    message := fmt.Sprintf(\"Hello, %s! You are %d years old.\", name, age)\n    fmt.Println(message)\n}",
+        "explanation": "Go 没有内建字符串插值语法，通常使用 fmt.Sprintf 进行格式化。",
         "output": "Hello, Alice! You are 30 years old.",
-        "designRationale": "Go 使用 C 风格的格式化字符串，强调显式和类型安全",
+        "designRationale": "Go 选择显式格式化函数，让格式控制和参数类型对应关系更清楚。",
         "pros": [
-          "类型安全",
-          "性能好"
+          "格式控制明确",
+          "标准库内建"
         ],
         "cons": [
-          "语法较冗长",
-          "需要记忆格式化占位符"
+          "占位符和参数顺序需要人工保持一致"
         ]
       },
       {
-        "languageId": "ruby",
-        "code": "name = 'Alice'\nage = 30\nmessage = \"Hello, #{name}! You are #{age} years old.\"\nputs message",
-        "explanation": "使用 #{} 语法在双引号字符串中进行插值",
+        "languageId": "swift",
+        "code": "let name = \"Alice\"\nlet age = 30\nlet message = \"Hello, \\(name)! You are \\(age) years old.\"\nprint(message)",
+        "explanation": "Swift 使用 \\(...) 在字符串中插入变量或表达式。",
         "output": "Hello, Alice! You are 30 years old.",
-        "designRationale": "Ruby 的字符串插值语法简洁直观，是语言的核心特性",
+        "designRationale": "Swift 的插值语法与强类型表达式结合，适合在 UI 文案和调试输出中保持可读性。",
+        "sourceCard": "chapters/swift/swift-string-interpolation.md",
         "pros": [
-          "语法简洁",
-          "自然",
-          "支持任意表达式"
-        ]
-      },
-      {
-        "languageId": "php",
-        "code": "<?php\n$name = 'World';\n$greeting = \"Hello, $name!\";\necho $greeting;",
-        "explanation": "PHP 双引号字符串内变量自动展开",
-        "output": "Hello, World!",
-        "designRationale": "PHP 区分双引号(支持插值)和单引号(原文)，配合 {$expr} 可嵌入复杂表达式",
-        "pros": [
-          "语法直接",
-          "原生支持"
-        ],
-        "cons": [
-          "单/双引号语义不同需谨慎"
-        ]
-      },
-      {
-        "languageId": "cpp",
-        "code": "#include <iostream>\n#include <format>\n#include <string>\n\nint main() {\n    std::string name = \"World\";\n    std::cout << std::format(\"Hello, {}!\", name);\n}",
-        "explanation": "C++20 std::format 提供类型安全的格式化字符串",
-        "output": "Hello, World!",
-        "designRationale": "std::format 借鉴自 Python 的格式化语法，是 printf/iostream 的现代替代",
-        "pros": [
-          "类型安全",
-          "可扩展",
-          "性能优秀"
-        ],
-        "cons": [
-          "需要 C++20 编译器支持"
-        ],
-        "references": [
-          {
-            "title": "std::format - cppreference",
-            "url": "https://en.cppreference.com/w/cpp/utility/format/format"
-          }
+          "语法直观",
+          "可插入任意表达式"
         ]
       }
     ]
@@ -527,61 +487,64 @@
   {
     "id": "async-await",
     "title": "异步等待",
-    "description": "以同步的方式编写异步代码，提高可读性",
-    "category": "并发编程",
+    "description": "用接近顺序代码的形态表达异步流程，避免回调层层嵌套。",
+    "category": "异步编程",
     "difficulty": "intermediate",
     "paradigms": [
-      "异步编程"
+      "并发",
+      "事件驱动"
     ],
     "tags": [
-      "异步",
-      "Promise",
-      "Future"
+      "async",
+      "await",
+      "异步"
     ],
+    "source": "tech-cards-handbook",
     "implementations": [
       {
         "languageId": "javascript",
-        "code": "async function fetchUserData(userId) {\n  const response = await fetch(`/api/users/${userId}`);\n  const user = await response.json();\n  return user;\n}\n\nfetchUserData(1)\n  .then(user => console.log(user))\n  .catch(err => console.error(err));",
-        "explanation": "使用 async/await 语法处理 Promise",
-        "output": "{ id: 1, name: 'Alice' }",
-        "designRationale": "async/await 使异步代码看起来像同步代码，提高可读性",
+        "code": "async function loadUser(id) {\n  const response = await fetch(`/api/users/${id}`);\n  if (!response.ok) throw new Error('request failed');\n  return await response.json();\n}",
+        "explanation": "JavaScript 使用 async 声明返回 Promise 的函数，用 await 暂停到 Promise 完成。",
+        "designRationale": "async/await 把 Promise 链式调用改写为更接近同步流程的控制结构。",
         "pros": [
           "可读性强",
-          "错误处理清晰",
-          "避免回调地狱"
+          "try/catch 可以覆盖 await 失败"
         ]
       },
       {
         "languageId": "python",
-        "code": "import asyncio\nimport aiohttp\n\nasync def fetch_user_data(user_id):\n    async with aiohttp.ClientSession() as session:\n        async with session.get(f'/api/users/{user_id}') as response:\n            return await response.json()\n\nasyncio.run(fetch_user_data(1))",
-        "explanation": "使用 asyncio 和 async/await 进行异步编程",
-        "designRationale": "Python 的 asyncio 提供了协程支持，适合 I/O 密集型任务",
+        "code": "import asyncio\n\nasync def load_user(user_id: str) -> dict:\n    await asyncio.sleep(0.1)\n    return {\"id\": user_id}\n\nuser = asyncio.run(load_user(\"u1\"))\nprint(user)",
+        "explanation": "Python 用 async def 定义协程，await 等待另一个协程或 awaitable 完成。",
+        "output": "{'id': 'u1'}",
+        "designRationale": "asyncio 让高等待时间 I/O 可以共享事件循环，入口处用 asyncio.run 接入同步世界。",
+        "sourceCard": "chapters/python/asyncio-run-sync-entrypoint.md",
         "pros": [
-          "高效的 I/O",
-          "简洁的语法",
-          "生态系统支持"
-        ]
-      },
-      {
-        "languageId": "rust",
-        "code": "use tokio;\n\n#[tokio::main]\nasync fn main() {\n    let user = fetch_user_data(1).await;\n    println!(\"{:?}\", user);\n}\n\nasync fn fetch_user_data(user_id: u32) -> Result<User, Error> {\n    let response = reqwest::get(format!(\"https://api.example.com/users/{}\", user_id)).await?;\n    let user = response.json::<User>().await?;\n    Ok(user)\n}",
-        "explanation": "使用 async/await 和 tokio 运行时",
-        "designRationale": "Rust 的异步是零成本抽象，编译时生成状态机",
-        "pros": [
-          "零成本抽象",
-          "类型安全",
-          "高性能"
+          "适合高并发 I/O",
+          "控制流接近同步代码"
+        ],
+        "cons": [
+          "不能在已有事件循环中随意嵌套 asyncio.run"
         ]
       },
       {
         "languageId": "csharp",
-        "code": "using System.Net.Http;\nusing System.Threading.Tasks;\n\npublic async Task<User> FetchUserDataAsync(int userId)\n{\n    using var client = new HttpClient();\n    var response = await client.GetAsync($\"/api/users/{userId}\");\n    var user = await response.Content.ReadAsAsync<User>();\n    return user;\n}",
-        "explanation": "使用 async/await 和 Task",
-        "designRationale": "C# 的 async/await 是语言级特性，与 .NET 框架深度集成",
+        "code": "public async Task<User> LoadUserAsync(string id)\n{\n    using var client = new HttpClient();\n    var response = await client.GetFromJsonAsync<User>($\"/api/users/{id}\");\n    return response ?? throw new InvalidOperationException(\"user not found\");\n}",
+        "explanation": "C# 使用 async Task<T> 表达异步返回值，用 await 等待 Task 完成。",
+        "designRationale": "Task 模型把异步操作类型化，async/await 与异常传播、泛型返回值自然结合。",
         "pros": [
-          "语言级支持",
-          "异常处理清晰",
-          "性能优秀"
+          "返回类型明确",
+          "与 .NET 异步库深度集成"
+        ]
+      },
+      {
+        "languageId": "swift",
+        "code": "func loadUser(id: String) async throws -> User {\n    let (data, _) = try await URLSession.shared.data(from: userURL(id))\n    return try JSONDecoder().decode(User.self, from: data)\n}",
+        "explanation": "Swift 使用 async throws 标记异步且可能失败的函数，try await 同时表达等待和错误传播。",
+        "designRationale": "Swift 把异步和错误都放进函数签名，让调用方清楚看到等待点和失败点。",
+        "sourceCard": "chapters/swift/swift-async-await-readable-flow.md",
+        "pros": [
+          "等待点显式",
+          "与 throws 错误模型组合自然"
         ]
       }
     ]
