@@ -187,6 +187,28 @@ implementations:
     });
   });
 
+  it('keeps existing ByteBite idioms when the optional handbook checkout is unavailable', async () => {
+    await withTempWorkspace(async (root) => {
+      const bytebiteDir = path.join(root, 'bytebite');
+      const outputPath = path.join(bytebiteDir, 'src', 'data', 'idioms.json');
+      const existingIdioms = [
+        { id: 'legacy-only', title: '旧内容', implementations: [] },
+      ];
+      await mkdir(path.dirname(outputPath), { recursive: true });
+      await writeFile(outputPath, `${JSON.stringify(existingIdioms, null, 2)}\n`, 'utf8');
+
+      const idioms = await syncTechCards({
+        handbookDir: path.join(root, 'missing-handbook'),
+        bytebiteDir,
+        knownLanguageIds: ['python'],
+        allowMissingHandbook: true,
+      });
+
+      expect(idioms).toEqual(existingIdioms);
+      expect(JSON.parse(await readFile(outputPath, 'utf8'))).toEqual(existingIdioms);
+    });
+  });
+
   it('writes generated idioms JSON to the ByteBite data directory', async () => {
     await withTempWorkspace(async (root) => {
       await writeFeature(
